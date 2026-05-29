@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import AuthService, { LoginRequest, RegisterRequest, AuthResponse } from '../api/authApi';
+import AuthService, { type LoginRequest, type RegisterRequest, type AuthResponse } from '../api/authApi';
 
 interface UseAuthReturn {
   isLoading: boolean;

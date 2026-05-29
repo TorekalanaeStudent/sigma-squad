@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Receives request → validates → passes to AuthService → returns response
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

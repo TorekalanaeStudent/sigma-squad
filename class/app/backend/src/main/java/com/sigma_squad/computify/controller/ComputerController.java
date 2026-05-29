@@ -13,7 +13,7 @@ import java.util.List;
  * Receives request → validates → passes to ComputerService → returns response
  */
 @RestController
-@RequestMapping("/computers")
+@RequestMapping("/api/computers")
 @RequiredArgsConstructor
 public class ComputerController {
 

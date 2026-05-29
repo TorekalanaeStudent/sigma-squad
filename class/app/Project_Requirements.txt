@@ -1,0 +1,495 @@
+# 0. MVP SCOPE (CRITICAL DECISION)
+
+### MVP Goal
+
+Deliver a working system where:
+
+* Students can login
+* Students can see computer availability
+* Students can reserve 1 computer
+* Reservation expires after 5 minutes if not confirmed
+* Librarian can assign / end sessions
+* System prevents double booking
+
+---
+
+# 1. DOMAIN MODEL (CORE ENTITIES)
+
+## 1.1 User
+
+```java
+User
+- id (UUID)
+- name (String)
+- studentId (String, unique)
+- email (String, unique)
+- passwordHash (String)
+- role (ENUM: STUDENT, LIBRARIAN)
+- createdAt (Instant)
+```
+
+### Rules
+
+* Email must end in `@nu.edu.ph` (or your institution domain)
+* studentId required for STUDENT only
+* password stored hashed (BCrypt)
+
+---
+
+## 1.2 Computer
+
+```java
+Computer
+- id (UUID)
+- computerNumber (int, unique)
+- status (ENUM: AVAILABLE, RESERVED, IN_USE, OUT_OF_SERVICE)
+- currentUserId (UUID, nullable)
+```
+
+### Rules
+
+* One computer can only be assigned to one active user/session
+* Status is derived from Reservation/Session but stored for fast access (MVP simplification)
+
+---
+
+## 1.3 Reservation
+
+```java
+Reservation
+- id (UUID)
+- userId (UUID)
+- computerId (UUID)
+- status (ENUM: ACTIVE, EXPIRED, CANCELLED, CONFIRMED)
+- reservedAt (Instant)
+- expiresAt (Instant) // reservedAt + 5 minutes
+```
+
+### Rules
+
+* One ACTIVE reservation per user only
+* Auto-expire after 5 minutes if not confirmed
+
+---
+
+## 1.4 Session
+
+```java
+Session
+- id (UUID)
+- userId (UUID)
+- computerId (UUID)
+- startTime (Instant)
+- endTime (Instant, nullable)
+- status (ENUM: ACTIVE, ENDED)
+```
+
+---
+
+# 2. BACKEND ARCHITECTURE (SPRING BOOT)
+
+## 2.1 Layered Structure (STRICT)
+
+```
+controller
+service
+repository
+entity
+dto
+security
+scheduler
+exception
+```
+
+---
+
+## 2.2 Key Design Pattern Usage
+
+* **Service Layer Pattern** → business logic isolation
+* **DTO Pattern** → prevent entity leakage
+* **Strategy Pattern (light use)** → role-based access logic (optional)
+* **Scheduler Pattern** → reservation expiration
+* **Facade (optional)** → combine reservation + session flow
+
+---
+
+# 3. API DESIGN (MVP)
+
+## 3.1 Auth APIs
+
+### POST /auth/register (STUDENT only)
+
+```json
+{
+  "name": "John Doe",
+  "studentId": "2023-12345",
+  "email": "john@nu.edu.ph",
+  "password": "123456"
+}
+```
+
+### Rules:
+
+* Reject if email not NU domain
+* Reject if studentId exists
+* Role auto-assigned = STUDENT
+
+---
+
+### POST /auth/login
+
+Returns JWT:
+
+```json
+{
+  "token": "jwt-token"
+}
+```
+
+---
+
+## 3.2 Computer APIs
+
+### GET /computers
+
+Returns all computers + status
+
+```json
+[
+  {
+    "id": "...",
+    "number": 1,
+    "status": "AVAILABLE"
+  }
+]
+```
+
+---
+
+### POST /computers (LIBRARIAN ONLY)
+
+Create computers (setup phase)
+
+---
+
+## 3.3 Reservation APIs
+
+### POST /reservations
+
+```json
+{
+  "computerId": "uuid"
+}
+```
+
+### Rules:
+
+* User must NOT have ACTIVE reservation
+* Computer must be AVAILABLE
+
+---
+
+### POST /reservations/{id}/cancel
+
+---
+
+### POST /reservations/{id}/confirm (LIBRARIAN ACTION)
+
+* Converts reservation → session
+
+---
+
+## 3.4 Session APIs
+
+### GET /sessions/active
+
+### POST /sessions/{id}/end (LIBRARIAN ONLY)
+
+---
+
+# 4. BUSINESS LOGIC (CRITICAL RULES)
+
+## 4.1 Reservation Rules
+
+* Max 1 active reservation per user
+* If user creates reservation:
+
+  * Computer → RESERVED
+  * Reservation expires in 5 minutes
+
+---
+
+## 4.2 Expiration Logic (VERY IMPORTANT)
+
+### Spring Scheduler (every 30–60 seconds)
+
+```java
+@Scheduled(fixedRate = 60000)
+```
+
+Checks:
+
+* If `now > expiresAt`
+* Set reservation → EXPIRED
+* Set computer → AVAILABLE
+
+---
+
+## 4.3 Confirmation Flow
+
+1. Student reserves computer
+2. Librarian confirms
+3. Reservation → CONFIRMED
+4. Session created
+5. Computer → IN_USE
+
+---
+
+# 5. SECURITY (MVP LEVEL)
+
+## 5.1 JWT Auth
+
+* Stateless authentication
+* Token contains:
+
+  * userId
+  * role
+
+---
+
+## 5.2 Role Guarding
+
+```java
+@PreAuthorize("hasRole('LIBRARIAN')")
+```
+
+---
+
+## 5.3 Email Validation
+
+```java
+if (!email.endsWith("@nu.edu.ph")) {
+    throw new InvalidEmailException();
+}
+```
+
+---
+
+# 6. FRONTEND (REACT + TYPESCRIPT)
+
+## 6.1 Folder Structure
+
+```
+src/
+  api/
+  components/
+  pages/
+  hooks/
+  context/
+  types/
+  utils/
+```
+
+---
+
+## 6.2 State Management (MVP)
+
+Use:
+
+* React Context (NOT Redux yet)
+
+Contexts:
+
+* AuthContext
+* ComputerContext
+
+---
+
+## 6.3 Pages
+
+### Student Side
+
+* LoginPage
+* RegisterPage
+* DashboardPage
+* ReservationPage
+
+---
+
+### Librarian Side
+
+* AdminDashboardPage
+* ManageComputersPage
+* ActiveSessionsPage
+
+---
+
+## 6.4 Core Components
+
+### ComputerGrid
+
+Displays all computers:
+
+* Available (green)
+* Reserved (yellow)
+* In use (red)
+
+---
+
+### ReservationCard
+
+* timer countdown
+* cancel button
+
+---
+
+### SessionTable
+
+* active users
+* time remaining
+
+---
+
+# 7. FRONTEND LOGIC RULES
+
+## 7.1 Polling (MVP Real-time substitute)
+
+Instead of WebSockets:
+
+* Refresh computers every 10–15 seconds
+
+```ts
+setInterval(fetchComputers, 10000);
+```
+
+---
+
+## 7.2 Reservation Timer
+
+Frontend countdown:
+
+* based on `expiresAt`
+* auto updates UI
+
+---
+
+# 8. DATABASE DESIGN (POSTGRESQL)
+
+## users
+
+* id (PK)
+* name
+* student_id (unique)
+* email (unique)
+* password_hash
+* role
+
+---
+
+## computers
+
+* id (PK)
+* computer_number
+* status
+* current_user_id (nullable)
+
+---
+
+## reservations
+
+* id
+* user_id
+* computer_id
+* status
+* reserved_at
+* expires_at
+
+---
+
+## sessions
+
+* id
+* user_id
+* computer_id
+* start_time
+* end_time
+* status
+
+---
+
+# 9. EDGE CASES (MUST HANDLE)
+
+## Reservation
+
+* User refreshes page → reservation still active
+* User tries double reservation → block
+* Computer already reserved → reject
+
+---
+
+## Session
+
+* Librarian ends session early → computer becomes AVAILABLE
+* Session ends → clear currentUserId
+
+---
+
+## Expiration
+
+* Scheduler must NOT double-expire
+* Expired reservation cannot be confirmed
+
+---
+
+# 10. MVP PRIORITY ORDER (BUILD THIS FIRST)
+
+## Phase 1 (CORE SYSTEM)
+
+1. User authentication (JWT)
+2. Role system (Student / Librarian)
+3. Computer listing
+4. Reservation creation
+5. Reservation restriction (1 active only)
+
+---
+
+## Phase 2 (CORE FLOW)
+
+6. Reservation expiration scheduler
+7. Librarian dashboard
+8. Confirm reservation → session
+
+---
+
+## Phase 3 (STABILITY)
+
+9. End session manually
+10. Status synchronization
+11. UI polling updates
+
+---
+
+# 11. WHAT NOT TO BUILD (YET)
+
+Avoid for MVP:
+
+* WebSockets (too complex now)
+* Microservices
+* Redis caching
+* Advanced analytics
+* Mobile app
+* QR login
+* Notifications system
+
+---
+
+# 12. FINAL ARCHITECTURE SUMMARY
+
+### Simple Flow:
+
+```
+Student → Reserve Computer → 5 min timer
+        → Librarian confirms
+        → Session starts
+        → Librarian ends session
+```

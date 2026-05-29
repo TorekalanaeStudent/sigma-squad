@@ -1,4 +1,4 @@
-# Computify (Working Title)
+# CLASS (Computer Library Access Supported System)
 
 ## Group Members
 
@@ -48,6 +48,14 @@ Computify will provide:
 ## Competitive Advantage
 
 The proposed system is unique because similar systems are not commonly implemented in regular institutional library environments.
+
+## Similar Existing Applications
+
+- LibCal
+- LabStats
+- NetSupport School
+- Skedda
+- Envoy
 
 ---
 

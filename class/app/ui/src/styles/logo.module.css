@@ -1,0 +1,117 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.logo-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-mark {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.book {
+  position: absolute;
+  width: 20px;
+  height: 28px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 2px;
+  transform: rotateY(var(--book-index) * 15deg) rotateX(5deg) translateZ(calc(var(--book-index) * 8px));
+  box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.book:nth-child(1) {
+  --book-index: -1;
+}
+
+.book:nth-child(3) {
+  --book-index: 1;
+}
+
+.logo-text {
+  flex: 1;
+}
+
+.logo-text h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: -1px;
+}
+
+.logo-text p {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  margin: 0.25rem 0 0 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Responsive Logo Sizes */
+.logo-small {
+  gap: 1rem;
+}
+
+.logo-small .logo-container {
+  width: 50px;
+  height: 50px;
+}
+
+.logo-small .logo-text h1 {
+  font-size: 1.25rem;
+}
+
+.logo-small .logo-text p {
+  font-size: 0.65rem;
+}
+
+.logo-medium {
+  gap: 1.5rem;
+}
+
+.logo-medium .logo-container {
+  width: 80px;
+  height: 80px;
+}
+
+.logo-medium .logo-text h1 {
+  font-size: 2rem;
+}
+
+.logo-large {
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.logo-large .logo-container {
+  width: 120px;
+  height: 120px;
+}
+
+.logo-large .book {
+  width: 30px;
+  height: 42px;
+}
+
+.logo-large .logo-text h1 {
+  font-size: 2.5rem;
+}
+
+.logo-large .logo-text p {
+  font-size: 0.85rem;
+}

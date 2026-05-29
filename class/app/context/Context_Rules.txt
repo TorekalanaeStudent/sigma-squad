@@ -1,0 +1,350 @@
+# ⚙️ VIBE CODING CONTEXT (FOR THIS PROJECT)
+
+Think of your system like this:
+
+> “I am building a real library operating system where every action is a business rule, not just a CRUD operation.”
+
+So instead of:
+
+* ❌ “I save reservation to database”
+
+You think:
+
+* ✅ “A student is requesting access to a computer, and the system must enforce rules before allowing it”
+
+---
+
+# 🧠 CORE MINDSET (VERY IMPORTANT)
+
+## 1. “Business First, Code Second”
+
+Always translate features into **real-world behavior**:
+
+| Real World Action   | Code Equivalent                |
+| ------------------- | ------------------------------ |
+| Student reserves PC | ReservationService.reserve()   |
+| Reservation expires | Scheduler expiresReservation() |
+| Librarian confirms  | SessionService.startSession()  |
+
+---
+
+## 2. “Every class must answer ONE question”
+
+Examples:
+
+* UserService → “What can users do?”
+* ReservationService → “How do reservations work?”
+* ComputerService → “What is the state of a computer?”
+
+If a class answers multiple questions → **split it**
+
+---
+
+## 3. “Controllers are receptionists, not workers”
+
+Controller rule:
+
+> Only receive request → validate → pass to service → return response
+
+NO business logic inside controllers.
+
+---
+
+# 🧱 OOP IMPLEMENTATION GUIDE (PRACTICAL)
+
+---
+
+# 1. ENTITY DESIGN RULE
+
+## Vibe Rule:
+
+> Entities represent REAL WORLD OBJECTS, not database tables.
+
+### Good:
+
+* User = a person
+* Computer = a physical machine
+* Reservation = intent to use a computer
+* Session = actual usage
+
+---
+
+## Entity Rule of Thumb:
+
+Entities should:
+
+* hold data
+* contain simple state behavior
+* NOT contain complex business logic
+
+---
+
+# 2. SERVICE DESIGN RULE (MOST IMPORTANT LAYER)
+
+## Vibe Rule:
+
+> “Services are the brain of the system.”
+
+Each service should represent a **business capability**:
+
+### Correct breakdown:
+
+* `AuthService` → login/register rules
+* `ReservationService` → booking logic
+* `ComputerService` → availability logic
+* `SessionService` → usage tracking
+
+---
+
+## Service Rule:
+
+> If a method is longer than 20–30 lines → split it.
+
+---
+
+# 3. DEPENDENCY RULE (LOW COUPLING)
+
+## Vibe Rule:
+
+> “Never depend on concrete classes. Always depend on contracts.”
+
+### Good:
+
+```java
+private final ReservationRepository reservationRepository;
+```
+
+### Even better mindset:
+
+> “I don’t care HOW data is stored. I care that I can use it.”
+
+---
+
+# 4. REPOSITORY RULE (DATA ACCESS LAYER)
+
+## Vibe Rule:
+
+> “Repositories should only talk about data, not logic.”
+
+### Allowed:
+
+* save()
+* findById()
+* findActiveReservations()
+
+### NOT allowed:
+
+* business rules
+* validation
+* expiration logic
+
+---
+
+# 5. BUSINESS RULE CENTRALIZATION
+
+## Vibe Rule:
+
+> “Rules live in ONE place only.”
+
+### Example rules:
+
+* 1 reservation per student
+* 5-minute expiration
+* cannot reserve occupied computer
+
+These must live in:
+👉 ReservationService ONLY
+
+NOT duplicated across controllers or repositories.
+
+---
+
+# 6. COMPOSITION OVER INHERITANCE (REAL USE RULE)
+
+## Vibe Rule:
+
+> “Don’t build family trees. Build Lego blocks.”
+
+### Bad:
+
+* AdminUser extends User
+* StudentUser extends User
+
+### Good:
+
+```java
+User {
+   Role role;
+}
+```
+
+---
+
+# 7. STATE MANAGEMENT RULE (VERY IMPORTANT FOR YOUR SYSTEM)
+
+## Computer state MUST always be consistent:
+
+### Allowed transitions:
+
+```
+AVAILABLE → RESERVED → IN_USE → AVAILABLE
+```
+
+### Rule:
+
+> Never allow skipping states
+
+---
+
+# 8. RESERVATION FLOW (CORE DOMAIN VIBE)
+
+Think like this:
+
+### Step 1: Intent
+
+Student → “I want a computer”
+
+### Step 2: Reservation created
+
+System → holds slot temporarily
+
+### Step 3: Confirmation
+
+Librarian → approves usage
+
+### Step 4: Session starts
+
+Computer → IN_USE
+
+### Step 5: End
+
+Session → finished, computer reset
+
+---
+
+# 9. ERROR HANDLING RULE (VERY CLEAN ARCHITECTURE)
+
+## Vibe Rule:
+
+> “Failures are part of the system design, not exceptions in chaos.”
+
+### Always define:
+
+* UserAlreadyHasReservationException
+* ComputerNotAvailableException
+* ReservationExpiredException
+
+---
+
+# 10. FRONTEND VIBE RULE (React + TS)
+
+## Rule:
+
+> “UI should reflect system state, not guess it.”
+
+### Example:
+
+Instead of:
+
+* frontend calculating availability
+
+You:
+
+* backend sends truth:
+
+```json
+{ "status": "RESERVED" }
+```
+
+---
+
+## React rule:
+
+> Components should be dumb unless they manage UI state only.
+
+---
+
+# 11. API DESIGN VIBE RULE
+
+## Rule:
+
+> “Every endpoint must represent an ACTION, not a table.”
+
+### Good:
+
+* POST /reservations → reserve computer
+* POST /sessions/start → start usage
+* POST /sessions/end → end usage
+
+### Bad:
+
+* /updateComputerTable
+* /modifyUserRow
+
+---
+
+# 12. ANTI-SPAGHETTI RULES (CRITICAL)
+
+Avoid:
+
+### ❌ God Service
+
+One service doing everything
+
+### ❌ Mixed responsibilities
+
+ReservationService handling:
+
+* users
+* computers
+* sessions
+
+### ❌ Logic duplication
+
+Same rule in multiple places
+
+---
+
+# 13. SIMPLE ARCHITECTURE MEMORY MODEL
+
+Always visualize this:
+
+```
+Controller → Service → Repository → Database
+                ↓
+          Business Rules
+```
+
+---
+
+# 14. “GOOD OOP CHECKLIST” (USE THIS WHILE CODING)
+
+Before committing code, ask:
+
+### Structure
+
+* Is this class doing only ONE job?
+* Can I name it clearly in one sentence?
+
+### Logic
+
+* Are business rules centralized?
+* Is logic duplicated?
+
+### Dependencies
+
+* Am I depending on interfaces?
+* Can I replace implementation easily?
+
+### State
+
+* Is system state consistent?
+* Are transitions valid?
+
+---
+
+# 🧩 FINAL VIBE SUMMARY
+
+If you remember only this:
+
+> “Every feature is a business rule. Every class is a role. Every method is a behavior. Keep them small, clear, and replaceable.”

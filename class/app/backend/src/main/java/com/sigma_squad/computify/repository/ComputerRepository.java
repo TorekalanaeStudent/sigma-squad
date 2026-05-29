@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ComputerRepository extends JpaRepository<Computer, Long> {
     Optional<Computer> findByComputerNumber(Integer computerNumber);
     boolean existsByComputerNumber(Integer computerNumber);
+    long countByStatus(Computer.ComputerStatus status);
 }

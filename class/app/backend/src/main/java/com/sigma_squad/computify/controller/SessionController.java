@@ -15,7 +15,7 @@ import java.util.List;
  * LIBRARIAN ONLY for most operations
  */
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/api/sessions")
 @RequiredArgsConstructor
 public class SessionController {
 

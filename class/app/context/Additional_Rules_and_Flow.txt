@@ -1,8 +1,9 @@
 Additional Rules:
-1. Create a unit test for our code
+1. Create a unit test for every new features added
 2. Create and update a changelog.md file for new entries/changes
 3. Follow KISS, DRY, YAGNI
 4. Create a summary for every new features added
 5. Make sure to ask for confirmation before creating a new feature
 6. Add lombok validation rules in every new features if possible
-7. Always use contracts if possible
+7. Always use records for DTOs and interfaces on service
+8. Apply OOP best pattern

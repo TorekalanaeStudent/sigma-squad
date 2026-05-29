@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Receives request → validates → passes to ReservationService → returns response
  */
 @RestController
-@RequestMapping("/reservations")
+@RequestMapping("/api/reservations")
 @RequiredArgsConstructor
 public class ReservationController {
 

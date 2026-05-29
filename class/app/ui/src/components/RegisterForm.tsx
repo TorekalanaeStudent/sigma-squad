@@ -33,7 +33,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
 
     // StudentId format: YYYY-[5-7 digits]
     if (!/^\d{4}-\d{5,7}$/.test(studentId.trim())) {
-      setLocalError('Invalid student ID. Format: YYYY-12345');
+      setLocalError('Invalid student ID. \n Format: YYYY-[5-7 digits]');
       return;
     }
 
@@ -72,7 +72,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
       <div className={styles['form-group']}>
         <input
           type="text"
-          placeholder="Full name"
+          placeholder="Full Name (e.g., Reyes, John Doe L.)"
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={isLoading}
@@ -83,7 +83,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
       <div className={styles['form-group']}>
         <input
           type="text"
-          placeholder="Student ID (e.g., 2025-12345)"
+          placeholder="School ID (e.g., 2026-12345)"
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
           disabled={isLoading}

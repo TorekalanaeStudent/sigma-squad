@@ -1,6 +1,7 @@
 package com.sigma_squad.computify.service;
 
 import com.sigma_squad.computify.dto.ComputerDTO;
+import com.sigma_squad.computify.dto.ComputerStatsDTO;
 import com.sigma_squad.computify.entity.Computer;
 import com.sigma_squad.computify.exception.BusinessRuleException;
 import com.sigma_squad.computify.exception.ResourceNotFoundException;
@@ -110,5 +111,34 @@ public class ComputerService {
         Computer computer = getComputerById(computerId);
         computer.setStatus(Computer.ComputerStatus.OUT_OF_SERVICE);
         computerRepository.save(computer);
+    }
+
+    /**
+     * Get computer availability statistics
+     */
+    public ComputerStatsDTO getComputerStats() {
+        List<Computer> allComputers = computerRepository.findAll();
+
+        long total = allComputers.size();
+        long available = allComputers.stream()
+            .filter(Computer::isAvailable)
+            .count();
+        long reserved = allComputers.stream()
+            .filter(c -> c.getStatus() == Computer.ComputerStatus.RESERVED)
+            .count();
+        long inUse = allComputers.stream()
+            .filter(c -> c.getStatus() == Computer.ComputerStatus.IN_USE)
+            .count();
+        long outOfService = allComputers.stream()
+            .filter(c -> c.getStatus() == Computer.ComputerStatus.OUT_OF_SERVICE)
+            .count();
+
+        return ComputerStatsDTO.builder()
+            .totalComputers(total)
+            .availableComputers(available)
+            .reservedComputers(reserved)
+            .inUseComputers(inUse)
+            .outOfServiceComputers(outOfService)
+            .build();
     }
 }

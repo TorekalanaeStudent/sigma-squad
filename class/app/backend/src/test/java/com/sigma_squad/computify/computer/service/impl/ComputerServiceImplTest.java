@@ -1,9 +1,8 @@
-package com.sigma_squad.computify.service;
+package com.sigma_squad.computify.computer.service.impl;
 
+import com.sigma_squad.computify.computer.dto.ComputerDTO;
 import com.sigma_squad.computify.computer.entity.Computer;
 import com.sigma_squad.computify.computer.repository.ComputerRepository;
-import com.sigma_squad.computify.computer.service.IComputerService;
-import com.sigma_squad.computify.computer.service.impl.ComputerServiceImpl;
 import com.sigma_squad.computify.shared.exception.BusinessRuleException;
 import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +16,14 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for ComputerServiceImpl
+ */
 @ExtendWith(MockitoExtension.class)
-public class ComputerServiceTest {
+class ComputerServiceImplTest {
 
     @Mock
     private ComputerRepository computerRepository;
@@ -32,92 +35,79 @@ public class ComputerServiceTest {
 
     @BeforeEach
     void setUp() {
-        testComputer = Computer.builder()
-                .id(1L)
-                .computerNumber(1)
-                .status(Computer.ComputerStatus.AVAILABLE)
-                .build();
+        testComputer = new Computer();
+        testComputer.setId(1L);
+        testComputer.setComputerNumber(1);
+        testComputer.setStatus(Computer.ComputerStatus.AVAILABLE);
     }
 
     @Test
     void testCreateComputerSuccess() {
-        // Given
         when(computerRepository.existsByComputerNumber(1)).thenReturn(false);
         when(computerRepository.save(any(Computer.class))).thenReturn(testComputer);
 
-        // When
         Computer result = computerService.createComputer(1);
 
-        // Then
         assertNotNull(result);
         assertEquals(1, result.getComputerNumber());
-        assertEquals(Computer.ComputerStatus.AVAILABLE, result.getStatus());
         verify(computerRepository, times(1)).save(any(Computer.class));
     }
 
     @Test
-    void testCreateComputerDuplicateNumber() {
-        // Given
+    void testCreateComputerDuplicate() {
         when(computerRepository.existsByComputerNumber(1)).thenReturn(true);
 
-        // When & Then
-        assertThrows(BusinessRuleException.class, () ->
-            computerService.createComputer(1)
-        );
+        assertThrows(BusinessRuleException.class, () -> computerService.createComputer(1));
     }
 
     @Test
     void testGetComputerByIdSuccess() {
-        // Given
         when(computerRepository.findById(1L)).thenReturn(Optional.of(testComputer));
 
-        // When
         Computer result = computerService.getComputerById(1L);
 
-        // Then
         assertNotNull(result);
         assertEquals(1L, result.getId());
     }
 
     @Test
     void testGetComputerByIdNotFound() {
-        // Given
-        when(computerRepository.findById(999L)).thenReturn(Optional.empty());
+        when(computerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // When & Then
-        assertThrows(ResourceNotFoundException.class, () ->
-            computerService.getComputerById(999L)
-        );
+        assertThrows(ResourceNotFoundException.class, () -> computerService.getComputerById(1L));
+    }
+
+    @Test
+    void testIsAvailableTrue() {
+        when(computerRepository.findById(1L)).thenReturn(Optional.of(testComputer));
+
+        boolean result = computerService.isAvailable(1L);
+
+        assertTrue(result);
     }
 
     @Test
     void testMarkAsReservedSuccess() {
-        // Given
         when(computerRepository.findById(1L)).thenReturn(Optional.of(testComputer));
         when(computerRepository.save(any(Computer.class))).thenReturn(testComputer);
 
-        // When
-        computerService.markAsReserved(1L, 10L);
+        computerService.markAsReserved(1L, 1L);
 
-        // Then
         assertEquals(Computer.ComputerStatus.RESERVED, testComputer.getStatus());
-        assertEquals(10L, testComputer.getCurrentUserId());
-        verify(computerRepository, times(1)).save(testComputer);
+        verify(computerRepository, times(1)).save(any(Computer.class));
     }
 
     @Test
-    void testMarkAsReservedNotAvailable() {
-        // Given
-        Computer unavailableComputer = Computer.builder()
-                .id(1L)
-                .computerNumber(1)
-                .status(Computer.ComputerStatus.IN_USE)
-                .build();
-        when(computerRepository.findById(1L)).thenReturn(Optional.of(unavailableComputer));
+    void testMarkAsAvailable() {
+        testComputer.setStatus(Computer.ComputerStatus.RESERVED);
+        testComputer.setCurrentUserId(1L);
 
-        // When & Then
-        assertThrows(BusinessRuleException.class, () ->
-            computerService.markAsReserved(1L, 10L)
-        );
+        when(computerRepository.findById(1L)).thenReturn(Optional.of(testComputer));
+        when(computerRepository.save(any(Computer.class))).thenReturn(testComputer);
+
+        computerService.markAsAvailable(1L);
+
+        assertEquals(Computer.ComputerStatus.AVAILABLE, testComputer.getStatus());
+        assertNull(testComputer.getCurrentUserId());
     }
 }

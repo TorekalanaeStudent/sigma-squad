@@ -31,6 +31,9 @@ export interface Session {
   startTime: string;
   endTime?: string;
   status: 'ACTIVE' | 'ENDED';
+  minutesRemaining?: number;
+  userName?: string;
+  computerNumber?: string;
 }
 
 export interface ChatMessage {
@@ -308,6 +311,30 @@ class SessionService {
     } catch (error: any) {
       throw {
         message: error.response?.data?.message || 'Failed to end session',
+        status: error.response?.status,
+      };
+    }
+  }
+
+  async getAllActiveSessions(): Promise<Session[]> {
+    try {
+      const response = await apiClient.get<Session[]>(`/sessions`);
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to fetch active sessions',
+        status: error.response?.status,
+      };
+    }
+  }
+
+  async removeUserFromSession(sessionId: number): Promise<Session> {
+    try {
+      const response = await apiClient.post<Session>(`/sessions/${sessionId}/remove-user`);
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to remove user from session',
         status: error.response?.status,
       };
     }

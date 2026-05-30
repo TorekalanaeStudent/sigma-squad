@@ -8,6 +8,7 @@ import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
 import com.sigma_squad.computify.reservation.repository.ReservationRepository;
 import com.sigma_squad.computify.computer.service.IComputerService;
 import com.sigma_squad.computify.history.service.IAuditLogService;
+import com.sigma_squad.computify.session.service.ISessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +28,16 @@ public class ReservationServiceImpl implements IReservationService {
 
     private final ReservationRepository reservationRepository;
     private final IComputerService computerService;
+    private final ISessionService sessionService;
     private final IAuditLogService auditLogService;
 
     @Override
     public Reservation createReservation(Long userId, Long computerId) {
+        // Business Rule: User cannot have multiple active sessions
+        if (sessionService.existsActiveSessionByUserId(userId)) {
+            throw new BusinessRuleException("User already has an active session. Cannot reserve another computer while in use");
+        }
+
         if (reservationRepository.existsByUserIdAndStatus(userId, Reservation.ReservationStatus.ACTIVE)) {
             throw new BusinessRuleException("User already has an active reservation");
         }
@@ -105,6 +112,9 @@ public class ReservationServiceImpl implements IReservationService {
         reservationRepository.save(reservation);
 
         computerService.markAsInUse(reservation.getComputerId(), reservation.getUserId());
+
+        // Create a new session for the user (1 hour duration)
+        sessionService.startSession(reservation.getUserId(), reservation.getComputerId());
 
         auditLogService.log(reservation.getUserId(), reservationId, "ACCEPT", "Reservation accepted and session started");
     }

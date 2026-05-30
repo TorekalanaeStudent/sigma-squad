@@ -16,4 +16,5 @@ public interface ISessionService {
     void extendSession(Long sessionId, long durationMinutes);
     List<SessionDTO> getAllActiveSessions();
     SessionDTO toDTO(Session session);
+    boolean existsActiveSessionByUserId(Long userId);
 }

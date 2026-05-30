@@ -52,6 +52,7 @@ public class ComputerServiceImpl implements IComputerService {
     @Override
     public List<ComputerDTO> getAllComputers() {
         return computerRepository.findAll().stream()
+            .sorted((c1, c2) -> c1.getComputerNumber().compareTo(c2.getComputerNumber()))
             .map(ComputerDTO::fromEntity)
             .collect(Collectors.toList());
     }

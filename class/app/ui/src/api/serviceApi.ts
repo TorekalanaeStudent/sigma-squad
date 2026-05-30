@@ -37,7 +37,7 @@ class StatsService {
 class ChatBotService {
   async sendMessage(message: string): Promise<ChatBotResponse> {
     try {
-      const response = await apiClient.post<ChatBotResponse>('chatbot/send', { message });
+      const response = await apiClient.post<ChatBotResponse>('/chatbot/send', { message });
       return response.data;
     } catch (error: any) {
       throw {

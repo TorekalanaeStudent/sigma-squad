@@ -1,7 +1,7 @@
 package com.sigma_squad.computify.scheduler;
 
-import com.sigma_squad.computify.entity.Reservation;
-import com.sigma_squad.computify.service.ReservationService;
+import com.sigma_squad.computify.reservation.entity.Reservation;
+import com.sigma_squad.computify.reservation.service.IReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationScheduler {
 
-    private final ReservationService reservationService;
+    private final IReservationService reservationService;
 
     /**
      * Expire reservations that have passed their expiration time

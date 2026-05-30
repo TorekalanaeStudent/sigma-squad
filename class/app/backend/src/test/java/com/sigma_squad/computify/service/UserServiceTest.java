@@ -1,9 +1,11 @@
 package com.sigma_squad.computify.service;
 
-import com.sigma_squad.computify.entity.User;
-import com.sigma_squad.computify.exception.BusinessRuleException;
-import com.sigma_squad.computify.exception.ResourceNotFoundException;
-import com.sigma_squad.computify.repository.UserRepository;
+import com.sigma_squad.computify.auth.entity.User;
+import com.sigma_squad.computify.auth.repository.UserRepository;
+import com.sigma_squad.computify.auth.service.IUserService;
+import com.sigma_squad.computify.auth.service.impl.UserServiceImpl;
+import com.sigma_squad.computify.shared.exception.BusinessRuleException;
+import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +26,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private User testUser;
 

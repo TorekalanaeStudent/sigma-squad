@@ -1,8 +1,8 @@
 package com.sigma_squad.computify.scheduler;
 
-import com.sigma_squad.computify.entity.Reservation;
-import com.sigma_squad.computify.entity.Reservation.ReservationStatus;
-import com.sigma_squad.computify.service.ReservationService;
+import com.sigma_squad.computify.reservation.entity.Reservation;
+import com.sigma_squad.computify.reservation.entity.Reservation.ReservationStatus;
+import com.sigma_squad.computify.reservation.service.IReservationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class ReservationSchedulerTest {
 
     @Mock
-    private ReservationService reservationService;
+    private IReservationService reservationService;
 
     @InjectMocks
     private ReservationScheduler reservationScheduler;

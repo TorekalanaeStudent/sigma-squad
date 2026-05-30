@@ -1,13 +1,16 @@
 package com.sigma_squad.computify.service;
 
-import com.sigma_squad.computify.dto.AuthResponse;
-import com.sigma_squad.computify.dto.LoginRequest;
-import com.sigma_squad.computify.dto.RegisterRequest;
-import com.sigma_squad.computify.dto.UserDTO;
-import com.sigma_squad.computify.entity.User;
-import com.sigma_squad.computify.exception.BusinessRuleException;
-import com.sigma_squad.computify.exception.UnauthorizedException;
-import com.sigma_squad.computify.security.JwtTokenProvider;
+import com.sigma_squad.computify.auth.dto.AuthResponse;
+import com.sigma_squad.computify.auth.dto.LoginRequest;
+import com.sigma_squad.computify.auth.dto.RegisterRequest;
+import com.sigma_squad.computify.auth.dto.UserDTO;
+import com.sigma_squad.computify.auth.entity.User;
+import com.sigma_squad.computify.auth.service.IAuthService;
+import com.sigma_squad.computify.auth.service.IUserService;
+import com.sigma_squad.computify.auth.service.impl.AuthServiceImpl;
+import com.sigma_squad.computify.shared.exception.BusinessRuleException;
+import com.sigma_squad.computify.shared.exception.UnauthorizedException;
+import com.sigma_squad.computify.shared.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class AuthServiceTest {
 
     @Mock
-    private UserService userService;
+    private IUserService userService;
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
@@ -33,7 +36,7 @@ public class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private AuthService authService;
+    private AuthServiceImpl authService;
 
     private User testUser;
     private UserDTO testUserDTO;

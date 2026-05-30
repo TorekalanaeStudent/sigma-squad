@@ -12,9 +12,12 @@ public interface IReservationService {
     Reservation createReservation(Long userId, Long computerId);
     Reservation getReservationById(Long id);
     Reservation getActiveReservationByUserId(Long userId);
+    List<Reservation> getUserReservations(Long userId);
+    List<Reservation> getAllReservations();
     void cancelReservation(Long reservationId);
     void confirmReservation(Long reservationId);
     void expireReservation(Long reservationId);
+    void updateReservationExpiresAt(Long reservationId, Long expiresAtSeconds);
     List<Reservation> getExpiredReservations();
     ReservationDTO toDTO(Reservation reservation);
 }

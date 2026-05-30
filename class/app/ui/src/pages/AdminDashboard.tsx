@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../api/authApi';
-import styles from '../styles/adminDashboard.module.css';
+import AdminSidebarNav from '../components/AdminSidebarNav';
+import PendingReservations from '../components/PendingReservations';
+import PendingExtensions from '../components/PendingExtensions';
+import styles from '../styles/studentDashboard.module.css';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const user = AuthService.getCurrentUser();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'sessions' | 'extensions'>('dashboard');
 
   const handleLogout = () => {
     AuthService.logout();
@@ -16,8 +20,15 @@ const AdminDashboard: React.FC = () => {
     document.title = 'Admin Dashboard - CLASS';
   }, []);
 
+  const handleRefresh = () => {
+    // Refresh logic if needed
+  };
+
   return (
     <div className={styles['dashboard']}>
+      {/* Sidebar Navigation */}
+      <AdminSidebarNav activeTab={activeTab} onTabChange={setActiveTab} />
+
       {/* Header */}
       <header className={styles['header']}>
         <div className={styles['header-left']}>
@@ -34,71 +45,56 @@ const AdminDashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className={styles['main-content']}>
-        <section className={styles['welcome-section']}>
-          <h2>Admin Control Panel</h2>
-          <p>Manage computers, confirm reservations, and monitor sessions</p>
-        </section>
+        {/* Dashboard Tab */}
+        {activeTab === 'dashboard' && (
+          <>
+            <section className={styles['welcome-section']}>
+              <h2>Admin Control Panel</h2>
+              <p>Manage computers, confirm reservations, and monitor sessions</p>
+            </section>
 
-        {/* Admin Features */}
-        <section className={styles['features-grid']}>
-          <div className={styles['feature-card']}>
-            <div className={styles['feature-icon']}>💻</div>
-            <h3>Manage Computers</h3>
-            <p>Add, edit, or remove computers from the system</p>
-            <button className={styles['feature-btn']}>Manage</button>
-          </div>
+            {/* Admin Features */}
+            <section className={styles['stats-grid']}>
+              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #8b5cf6' }}>
+                <div className={styles['stat-icon']}>📋</div>
+                <div className={styles['stat-content']}>
+                  <h3>Pending Reservations</h3>
+                  <p className={styles['stat-number']}>View & Accept</p>
+                </div>
+              </div>
 
-          <div className={styles['feature-card']}>
-            <div className={styles['feature-icon']}>📋</div>
-            <h3>Reservations</h3>
-            <p>View and confirm pending student reservations</p>
-            <button className={styles['feature-btn']}>View</button>
-          </div>
+              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #22c55e' }}>
+                <div className={styles['stat-icon']}>🚀</div>
+                <div className={styles['stat-content']}>
+                  <h3>Active Sessions</h3>
+                  <p className={styles['stat-number']}>Monitor</p>
+                </div>
+              </div>
 
-          <div className={styles['feature-card']}>
-            <div className={styles['feature-icon']}>⏱️</div>
-            <h3>Active Sessions</h3>
-            <p>Monitor and manage active user sessions</p>
-            <button className={styles['feature-btn']}>Monitor</button>
-          </div>
+              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #f59e0b' }}>
+                <div className={styles['stat-icon']}>⏱️</div>
+                <div className={styles['stat-content']}>
+                  <h3>Extensions</h3>
+                  <p className={styles['stat-number']}>Approve/Reject</p>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
 
-          <div className={styles['feature-card']}>
-            <div className={styles['feature-icon']}>👥</div>
-            <h3>User Management</h3>
-            <p>View and manage student and admin accounts</p>
-            <button className={styles['feature-btn']}>Manage</button>
-          </div>
+        {/* Pending Reservations Tab */}
+        {activeTab === 'pending' && <PendingReservations />}
 
-          <div className={styles['feature-card']}>
-            <div className={styles['feature-icon']}>📊</div>
-            <h3>Reports</h3>
-            <p>Generate usage reports and analytics</p>
-            <button className={styles['feature-btn']}>Generate</button>
-          </div>
+        {/* Active Sessions Tab */}
+        {activeTab === 'sessions' && <div style={{ padding: '2rem', color: '#cbd5e1' }}>🚀 Active Sessions Tab - Coming Soon</div>}
 
-          <div className={styles['feature-card']}>
-            <div className={styles['feature-icon']}>⚙️</div>
-            <h3>System Settings</h3>
-            <p>Configure system parameters and policies</p>
-            <button className={styles['feature-btn']}>Configure</button>
-          </div>
-        </section>
-
-        {/* Admin Info */}
-        <section className={styles['info-section']}>
-          <div className={styles['info-box']}>
-            <h3>🔐 Admin Privileges</h3>
-            <p>
-              This is the <strong>Admin Dashboard</strong>. Only librarians with admin access can view this page.
-              Students cannot access this area. Use these tools to effectively manage the computer library.
-            </p>
-          </div>
-        </section>
+        {/* Extensions Tab */}
+        {activeTab === 'extensions' && <PendingExtensions />}
       </main>
 
       {/* Footer */}
       <footer className={styles['footer']}>
-        <p>© 2026 Sigma Squad - Computer Library Access System. Admin Panel.</p>
+        <p>© 2026 Sigma Squad - Computer Library Access System. All rights reserved.</p>
       </footer>
     </div>
   );

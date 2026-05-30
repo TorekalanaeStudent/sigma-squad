@@ -10,6 +10,7 @@ import com.sigma_squad.computify.computer.service.IComputerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,8 @@ public class SessionServiceImpl implements ISessionService {
         Session session = new Session();
         session.setUserId(userId);
         session.setComputerId(computerId);
+        session.setStartTime(Instant.now());
+        session.setEndTime(Instant.now().plusSeconds(3600)); // 1 hour = 3600 seconds
         session.setStatus(Session.SessionStatus.ACTIVE);
 
         return sessionRepository.save(session);
@@ -62,6 +65,21 @@ public class SessionServiceImpl implements ISessionService {
         sessionRepository.save(session);
 
         computerService.markAsAvailable(session.getComputerId());
+    }
+
+    @Override
+    public void extendSession(Long sessionId, long durationMinutes) {
+        Session session = getSessionById(sessionId);
+
+        if (!session.isActive()) {
+            throw new BusinessRuleException("Cannot extend non-active session");
+        }
+
+        if (session.getEndTime() != null) {
+            session.setEndTime(session.getEndTime().plusSeconds(durationMinutes * 60));
+        }
+        
+        sessionRepository.save(session);
     }
 
     @Override

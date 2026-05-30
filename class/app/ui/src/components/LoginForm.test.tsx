@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LoginForm from '../components/LoginForm';
-import * as authApi from '../api/authApi';
 
 // Mock the auth API
 vi.mock('../api/authApi', () => ({

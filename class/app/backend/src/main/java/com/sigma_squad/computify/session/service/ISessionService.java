@@ -13,6 +13,7 @@ public interface ISessionService {
     Session getSessionById(Long id);
     Session getActiveSessionByUserId(Long userId);
     void endSession(Long sessionId);
+    void extendSession(Long sessionId, long durationMinutes);
     List<SessionDTO> getAllActiveSessions();
     SessionDTO toDTO(Session session);
 }

@@ -7,6 +7,7 @@ import com.sigma_squad.computify.reservation.service.IReservationService;
 import com.sigma_squad.computify.reservation.service.impl.ReservationServiceImpl;
 import com.sigma_squad.computify.shared.exception.BusinessRuleException;
 import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
+import com.sigma_squad.computify.history.service.IAuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ public class ReservationServiceTest {
 
     @Mock
     private IComputerService computerService;
+
+    @Mock
+    private IAuditLogService auditLogService;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;

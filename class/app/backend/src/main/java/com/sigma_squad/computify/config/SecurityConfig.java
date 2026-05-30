@@ -56,8 +56,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                 .requestMatchers("/api/stats/**").permitAll()
-                .requestMatchers("/api/computers/").permitAll()
+                .requestMatchers("/api/computers/**").permitAll()
                 .requestMatchers("/api/chatbot/**").permitAll()
+                .requestMatchers("/api/reservations/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

@@ -4,6 +4,8 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0e27 0%, #111829 50%, #1a1f3a 100%);
   color: #e5e7eb;
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
 }
 
 .header {
@@ -14,6 +16,9 @@
   background: rgba(17, 24, 41, 0.8);
   border-bottom: 2px solid #8b5cf6;
   backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-left {
@@ -62,11 +67,29 @@
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
+.chatbot-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.chatbot-btn:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
 .main-content {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   width: 100%;
 }
 
@@ -198,7 +221,50 @@
   font-size: 0.9rem;
 }
 
+/* Tab Navigation */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+  padding: 0 0 1rem 0;
+}
+
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: #cbd5e0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: #e5e7eb;
+}
+
+.tab-btn.active {
+  color: #8b5cf6;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%);
+}
+
 @media (max-width: 1024px) {
+  .dashboard {
+    margin-left: 250px;
+  }
+
   .main-content {
     padding: 1.5rem;
   }
@@ -214,10 +280,15 @@
 }
 
 @media (max-width: 768px) {
+  .dashboard {
+    margin-left: 0;
+  }
+
   .header {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+    padding: 1rem 1.5rem;
   }
 
   .header-left {
@@ -240,6 +311,10 @@
   .main-content {
     padding: 1rem;
   }
+
+  .tabs {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -254,5 +329,17 @@
   .action-btn {
     font-size: 0.9rem;
     padding: 0.75rem;
+  }
+
+  .header {
+    padding: 1rem;
+  }
+
+  .header-left h1 {
+    font-size: 1rem;
+  }
+
+  .user-name {
+    font-size: 0.9rem;
   }
 }

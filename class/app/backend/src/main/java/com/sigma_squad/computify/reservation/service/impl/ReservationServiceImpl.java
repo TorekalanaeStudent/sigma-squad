@@ -7,6 +7,7 @@ import com.sigma_squad.computify.shared.exception.BusinessRuleException;
 import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
 import com.sigma_squad.computify.reservation.repository.ReservationRepository;
 import com.sigma_squad.computify.computer.service.IComputerService;
+import com.sigma_squad.computify.history.service.IAuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     private final ReservationRepository reservationRepository;
     private final IComputerService computerService;
+    private final IAuditLogService auditLogService;
 
     @Override
     public Reservation createReservation(Long userId, Long computerId) {
@@ -48,6 +50,8 @@ public class ReservationServiceImpl implements IReservationService {
 
         computerService.markAsReserved(computerId, userId);
 
+        auditLogService.log(userId, saved.getId(), "CREATE", "Reservation created for Computer " + computerId);
+
         return saved;
     }
 
@@ -64,6 +68,16 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
+    public List<Reservation> getUserReservations(Long userId) {
+        return reservationRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
+    }
+
+    @Override
     public void cancelReservation(Long reservationId) {
         Reservation reservation = getReservationById(reservationId);
 
@@ -75,6 +89,8 @@ public class ReservationServiceImpl implements IReservationService {
         reservationRepository.save(reservation);
 
         computerService.markAsAvailable(reservation.getComputerId());
+
+        auditLogService.log(reservation.getUserId(), reservationId, "CANCEL", "Reservation cancelled");
     }
 
     @Override
@@ -89,6 +105,20 @@ public class ReservationServiceImpl implements IReservationService {
         reservationRepository.save(reservation);
 
         computerService.markAsInUse(reservation.getComputerId(), reservation.getUserId());
+
+        auditLogService.log(reservation.getUserId(), reservationId, "ACCEPT", "Reservation accepted and session started");
+    }
+
+    @Override
+    public void updateReservationExpiresAt(Long reservationId, Long expiresAtSeconds) {
+        Reservation reservation = getReservationById(reservationId);
+
+        if (!reservation.isActive()) {
+            throw new BusinessRuleException("Cannot update non-active reservation");
+        }
+
+        reservation.setExpiresAt(Instant.ofEpochSecond(expiresAtSeconds));
+        reservationRepository.save(reservation);
     }
 
     @Override
@@ -103,6 +133,8 @@ public class ReservationServiceImpl implements IReservationService {
         reservationRepository.save(reservation);
 
         computerService.markAsAvailable(reservation.getComputerId());
+
+        auditLogService.log(reservation.getUserId(), reservationId, "EXPIRE", "Reservation expired");
     }
 
     @Override

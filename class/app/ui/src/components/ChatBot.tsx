@@ -4,9 +4,10 @@ import styles from '../styles/chatBot.module.css';
 
 interface ChatBotProps {
   onClose: () => void;
+  onMinimize: () => void;
 }
 
-const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ onClose, onMinimize }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,24 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
   };
 
   useEffect(() => {
+    const saved = localStorage.getItem('chatbot_history');
+    if (saved) {
+      try {
+        setMessages(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load chat history:', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('chatbot_history', JSON.stringify(messages));
+    }
   }, [messages]);
 
   const handleSendMessage = async () => {
@@ -77,14 +95,29 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
     }
   };
 
+  const handleMinimize = () => {
+    localStorage.setItem('chatbot_history', JSON.stringify(messages));
+    onMinimize();
+  };
+
+  const handleClose = () => {
+    localStorage.removeItem('chatbot_history');
+    onClose();
+  };
+
   return (
     <div className={styles['chatbot-overlay']}>
       <div className={styles['chatbot-container']}>
         <div className={styles['chatbot-header']}>
           <h3>NOVA</h3>
-          <button className={styles['close-btn']} onClick={onClose}>
-            ✕
-          </button>
+          <div className={styles['header-buttons']}>
+            <button className={styles['minimize-btn']} onClick={handleMinimize} title="Minimize">
+              −
+            </button>
+            <button className={styles['close-btn']} onClick={handleClose} title="Close">
+              ✕
+            </button>
+          </div>
         </div>
 
         <div className={styles['chatbot-messages']}>

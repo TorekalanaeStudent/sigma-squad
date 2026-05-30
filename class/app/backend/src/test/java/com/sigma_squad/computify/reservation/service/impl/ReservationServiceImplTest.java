@@ -5,6 +5,7 @@ import com.sigma_squad.computify.reservation.repository.ReservationRepository;
 import com.sigma_squad.computify.computer.service.IComputerService;
 import com.sigma_squad.computify.shared.exception.BusinessRuleException;
 import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
+import com.sigma_squad.computify.history.service.IAuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,9 @@ class ReservationServiceImplTest {
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
+
+    @Mock
+    private IAuditLogService auditLogService;
 
     private Reservation testReservation;
 

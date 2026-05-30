@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -54,12 +56,7 @@ public class AuthServiceTest {
                 .isAdmin(false)
                 .build();
 
-        testUserDTO = UserDTO.builder()
-                .id(1L)
-                .name("John Doe")
-                .email("john@students.nu-laguna.edu.ph")
-                .studentId("2023-12345")
-                .build();
+        testUserDTO = new UserDTO(1L, "John Doe", "2023-12345", "john@students.nu-laguna.edu.ph", false, Instant.now());
 
         registerRequest = new RegisterRequest("John Doe", "2023-12345", "john@students.nu-laguna.edu.ph", "password123");
         loginRequest = new LoginRequest("john@students.nu-laguna.edu.ph", "password123");
@@ -80,8 +77,8 @@ public class AuthServiceTest {
 
         // Then
         assertNotNull(response);
-        assertEquals("jwt_token", response.getToken());
-        assertNotNull(response.getUser());
+        assertEquals("jwt_token", response.token());
+        assertNotNull(response.user());
         verify(userService, times(1)).createUser(
             "John Doe", "2023-12345", "john@students.nu-laguna.edu.ph", "hashed_password", false
         );
@@ -100,8 +97,8 @@ public class AuthServiceTest {
 
         // Then
         assertNotNull(response);
-        assertEquals("jwt_token", response.getToken());
-        assertNotNull(response.getUser());
+        assertEquals("jwt_token", response.token());
+        assertNotNull(response.user());
     }
 
     @Test

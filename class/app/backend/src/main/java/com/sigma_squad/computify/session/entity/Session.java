@@ -47,6 +47,14 @@ public class Session {
         this.status = SessionStatus.ENDED;
     }
 
+    public long getMinutesRemaining() {
+        if (endTime == null || !isActive()) {
+            return 0;
+        }
+        long diff = endTime.toEpochMilli() - Instant.now().toEpochMilli();
+        return diff / 60000;
+    }
+
     public enum SessionStatus {
         ACTIVE,
         ENDED

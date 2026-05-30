@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../styles/sidebarNav.module.css';
+import styles from '../styles/adminSidebarNav.module.css';
 
 interface AdminSidebarNavProps {
   activeTab: 'dashboard' | 'pending' | 'sessions' | 'extensions';
@@ -11,7 +11,7 @@ const AdminSidebarNav: React.FC<AdminSidebarNavProps> = ({ activeTab, onTabChang
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'pending', label: 'Pending Reservations', icon: '📋' },
+    { id: 'pending', label: 'Pending Request', icon: '📋' },
     { id: 'sessions', label: 'Active Sessions', icon: '🚀' },
     { id: 'extensions', label: 'Extensions', icon: '⏱️' },
   ];

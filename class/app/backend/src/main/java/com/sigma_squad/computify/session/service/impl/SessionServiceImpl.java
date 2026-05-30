@@ -93,4 +93,9 @@ public class SessionServiceImpl implements ISessionService {
     public SessionDTO toDTO(Session session) {
         return SessionDTO.fromEntity(session);
     }
+
+    @Override
+    public boolean existsActiveSessionByUserId(Long userId) {
+        return sessionRepository.existsByUserIdAndStatus(userId, Session.SessionStatus.ACTIVE);
+    }
 }

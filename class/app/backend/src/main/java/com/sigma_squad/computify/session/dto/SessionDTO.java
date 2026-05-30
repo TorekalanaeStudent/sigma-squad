@@ -4,7 +4,7 @@ import com.sigma_squad.computify.session.entity.Session;
 import java.time.Instant;
 
 /**
- * SessionDTO - DTO for session data transfer
+ * SessionDTO - DTO for session data transfer with time remaining calculation
  */
 public record SessionDTO(
     Long id,
@@ -12,7 +12,8 @@ public record SessionDTO(
     Long computerId,
     Instant startTime,
     Instant endTime,
-    String status
+    String status,
+    Long minutesRemaining
 ) {
     public static SessionDTO fromEntity(Session session) {
         return new SessionDTO(
@@ -21,7 +22,8 @@ public record SessionDTO(
             session.getComputerId(),
             session.getStartTime(),
             session.getEndTime(),
-            session.getStatus().toString()
+            session.getStatus().toString(),
+            session.getMinutesRemaining()
         );
     }
 }

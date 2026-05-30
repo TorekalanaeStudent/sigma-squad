@@ -4,12 +4,16 @@ import AuthService from '../api/authApi';
 import AdminSidebarNav from '../components/AdminSidebarNav';
 import PendingReservations from '../components/PendingReservations';
 import PendingExtensions from '../components/PendingExtensions';
-import styles from '../styles/studentDashboard.module.css';
+import ActiveSessionsTab from '../components/ActiveSessionsTab';
+import NotificationToast from '../components/NotificationToast';
+import { useWebSocketNotifications } from '../hooks/useWebSocketNotifications';
+import styles from '../styles/adminDashboard.module.css';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const user = AuthService.getCurrentUser();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'sessions' | 'extensions'>('dashboard');
+  const { notifications, isConnected, clearNotification } = useWebSocketNotifications();
 
   const handleLogout = () => {
     AuthService.logout();
@@ -19,10 +23,6 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     document.title = 'Admin Dashboard - CLASS';
   }, []);
-
-  const handleRefresh = () => {
-    // Refresh logic if needed
-  };
 
   return (
     <div className={styles['dashboard']}>
@@ -55,15 +55,15 @@ const AdminDashboard: React.FC = () => {
 
             {/* Admin Features */}
             <section className={styles['stats-grid']}>
-              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #8b5cf6' }}>
+              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #dc2626' }}>
                 <div className={styles['stat-icon']}>📋</div>
                 <div className={styles['stat-content']}>
-                  <h3>Pending Reservations</h3>
+                  <h3>Pending Requests</h3>
                   <p className={styles['stat-number']}>View & Accept</p>
                 </div>
               </div>
 
-              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #22c55e' }}>
+              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #dc2626' }}>
                 <div className={styles['stat-icon']}>🚀</div>
                 <div className={styles['stat-content']}>
                   <h3>Active Sessions</h3>
@@ -71,7 +71,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #f59e0b' }}>
+              <div className={styles['stat-card']} style={{ borderLeft: '4px solid #dc2626' }}>
                 <div className={styles['stat-icon']}>⏱️</div>
                 <div className={styles['stat-content']}>
                   <h3>Extensions</h3>
@@ -86,11 +86,23 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'pending' && <PendingReservations />}
 
         {/* Active Sessions Tab */}
-        {activeTab === 'sessions' && <div style={{ padding: '2rem', color: '#cbd5e1' }}>🚀 Active Sessions Tab - Coming Soon</div>}
+        {activeTab === 'sessions' && <ActiveSessionsTab />}
 
         {/* Extensions Tab */}
         {activeTab === 'extensions' && <PendingExtensions />}
       </main>
+
+      {/* Notification Toasts */}
+      <div className={styles['notification-container']}>
+        {notifications.map((notification, index) => (
+          <NotificationToast
+            key={`${notification.timestamp}-${index}`}
+            notification={notification}
+            index={index}
+            onClose={() => clearNotification(index)}
+          />
+        ))}
+      </div>
 
       {/* Footer */}
       <footer className={styles['footer']}>

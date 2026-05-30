@@ -9,6 +9,8 @@ import StudentPendingReservations from '../components/StudentPendingReservations
 import SidebarNav from '../components/SidebarNav';
 import CurrentSessionDisplay from '../components/CurrentSessionDisplay';
 import StudentHistoryTab from '../components/StudentHistoryTab';
+import NotificationToast from '../components/NotificationToast';
+import { useWebSocketNotifications } from '../hooks/useWebSocketNotifications';
 import styles from '../styles/studentDashboard.module.css';
 
 const StudentDashboard: React.FC = () => {
@@ -21,6 +23,7 @@ const StudentDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'computers' | 'pending' | 'reservations' | 'history'>('overview');
   const [reservationError, setReservationError] = useState<string | null>(null);
+  const { notifications, isConnected, clearNotification } = useWebSocketNotifications();
 
   useEffect(() => {
     document.title = 'Student Dashboard - CLASS';
@@ -212,6 +215,18 @@ const StudentDashboard: React.FC = () => {
 
       {/* ChatBot Overlay */}
       {showChatBot && <ChatBot onClose={() => setShowChatBot(false)} onMinimize={handleMinimize} />}
+
+      {/* Notification Toasts */}
+      <div className={styles['notification-container']}>
+        {notifications.map((notification, index) => (
+          <NotificationToast
+            key={`${notification.timestamp}-${index}`}
+            notification={notification}
+            index={index}
+            onClose={() => clearNotification(index)}
+          />
+        ))}
+      </div>
 
       {/* Footer */}
       <footer className={styles['footer']}>

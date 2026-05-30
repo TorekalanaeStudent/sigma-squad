@@ -17,7 +17,7 @@ const ActiveSessionsTab: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Update timers every second
+  // Update timers every second and sync with server data every 30 seconds
   useEffect(() => {
     const timerInterval = setInterval(() => {
       setTimers((prev) => {
@@ -29,8 +29,26 @@ const ActiveSessionsTab: React.FC = () => {
         return updated;
       });
     }, 1000);
-    return () => clearInterval(timerInterval);
-  }, []);
+
+    // Recalculate timers from server endTime every 30 seconds to handle clock drift
+    const syncInterval = setInterval(() => {
+      const newTimers: { [key: number]: number } = {};
+      sessions.forEach((session) => {
+        if (session.endTime) {
+          const endTimeMs = new Date(session.endTime).getTime();
+          const nowMs = Date.now();
+          const remainingMs = Math.max(0, endTimeMs - nowMs);
+          newTimers[session.id] = Math.ceil(remainingMs / 1000);
+        }
+      });
+      setTimers(newTimers);
+    }, 30000);
+
+    return () => {
+      clearInterval(timerInterval);
+      clearInterval(syncInterval);
+    };
+  }, [sessions]);
 
   const fetchActiveSessions = async () => {
     try {
@@ -38,11 +56,14 @@ const ActiveSessionsTab: React.FC = () => {
       const data = await serviceApi.sessions.getAllActiveSessions();
       setSessions(data);
       
-      // Initialize timers from server data
+      // Initialize timers from server data (calculate from endTime, not minutesRemaining)
       const newTimers: { [key: number]: number } = {};
       data.forEach((session) => {
-        if (session.minutesRemaining !== undefined) {
-          newTimers[session.id] = session.minutesRemaining * 60;
+        if (session.endTime) {
+          const endTimeMs = new Date(session.endTime).getTime();
+          const nowMs = Date.now();
+          const remainingMs = Math.max(0, endTimeMs - nowMs);
+          newTimers[session.id] = Math.ceil(remainingMs / 1000); // Convert to seconds, round up
         }
       });
       setTimers(newTimers);

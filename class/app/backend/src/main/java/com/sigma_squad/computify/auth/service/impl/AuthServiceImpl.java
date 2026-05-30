@@ -7,7 +7,7 @@ import com.sigma_squad.computify.auth.dto.RegisterRequest;
 import com.sigma_squad.computify.auth.entity.User;
 import com.sigma_squad.computify.shared.exception.UnauthorizedException;
 import com.sigma_squad.computify.auth.service.IUserService;
-import com.sigma_squad.computify.shared.security.JwtTokenProvider;
+import com.sigma_squad.computify.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

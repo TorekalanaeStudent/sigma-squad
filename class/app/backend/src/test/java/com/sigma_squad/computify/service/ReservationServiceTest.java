@@ -8,6 +8,9 @@ import com.sigma_squad.computify.reservation.service.impl.ReservationServiceImpl
 import com.sigma_squad.computify.shared.exception.BusinessRuleException;
 import com.sigma_squad.computify.shared.exception.ResourceNotFoundException;
 import com.sigma_squad.computify.history.service.IAuditLogService;
+import com.sigma_squad.computify.session.service.ISessionService;
+import com.sigma_squad.computify.notification.service.INotificationService;
+import com.sigma_squad.computify.auth.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +37,15 @@ public class ReservationServiceTest {
 
     @Mock
     private IAuditLogService auditLogService;
+
+    @Mock
+    private ISessionService sessionService;
+
+    @Mock
+    private INotificationService notificationService;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
@@ -54,9 +67,12 @@ public class ReservationServiceTest {
     @Test
     void testCreateReservationSuccess() {
         // Given
+        when(sessionService.existsActiveSessionByUserId(1L)).thenReturn(false);
         when(reservationRepository.existsByUserIdAndStatus(1L, Reservation.ReservationStatus.ACTIVE)).thenReturn(false);
         when(computerService.isAvailable(1L)).thenReturn(true);
         when(reservationRepository.save(any(Reservation.class))).thenReturn(testReservation);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(new com.sigma_squad.computify.auth.entity.User() {{ setName("Test User"); }}));
+        when(notificationService.createReservationNotification(anyLong(), any(), any(), any())).thenReturn(null);
 
         // When
         Reservation result = reservationService.createReservation(1L, 1L);
@@ -72,6 +88,7 @@ public class ReservationServiceTest {
     @Test
     void testCreateReservationUserAlreadyHasActive() {
         // Given
+        when(sessionService.existsActiveSessionByUserId(1L)).thenReturn(false);
         when(reservationRepository.existsByUserIdAndStatus(1L, Reservation.ReservationStatus.ACTIVE)).thenReturn(true);
 
         // When & Then
@@ -83,6 +100,7 @@ public class ReservationServiceTest {
     @Test
     void testCreateReservationComputerNotAvailable() {
         // Given
+        when(sessionService.existsActiveSessionByUserId(1L)).thenReturn(false);
         when(reservationRepository.existsByUserIdAndStatus(1L, Reservation.ReservationStatus.ACTIVE)).thenReturn(false);
         when(computerService.isAvailable(1L)).thenReturn(false);
 

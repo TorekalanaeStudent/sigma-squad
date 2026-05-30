@@ -23,7 +23,7 @@ const StudentDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'computers' | 'pending' | 'reservations' | 'history'>('overview');
   const [reservationError, setReservationError] = useState<string | null>(null);
-  const { notifications, isConnected, clearNotification } = useWebSocketNotifications();
+  const { notifications, clearNotification } = useWebSocketNotifications();
 
   useEffect(() => {
     document.title = 'Student Dashboard - CLASS';
@@ -220,7 +220,7 @@ const StudentDashboard: React.FC = () => {
       <div className={styles['notification-container']}>
         {notifications.map((notification, index) => (
           <NotificationToast
-            key={`${notification.timestamp}-${index}`}
+            key={`${notification.createdAt}-${index}`}
             notification={notification}
             index={index}
             onClose={() => clearNotification(index)}

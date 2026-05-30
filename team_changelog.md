@@ -1,5 +1,243 @@
 # Changelog - Sigma Squad Computify
 
+## [May 30, 2026] - Phase 5.2: Session Timer Fix ✅
+
+### 🎯 Phase 5.2 Overview
+Fixed a critical session timer bug where the countdown would reset to 59:00 after logging out and back in. The issue was caused by the frontend calculating remaining time based on a decremented counter instead of the actual database `endTime`. Now the timer is always calculated from the server's `endTime` timestamp, ensuring consistency across client refreshes and multiple devices.
+
+### 🐛 Bug Fix: Session Timer Reset Issue
+
+#### Problem
+**Symptom**: 
+- Session starts at 59:00
+- Timer counts down to (e.g.) 54:24
+- User logs out and logs back in
+- Timer resets to 59:00 instead of showing ~54:24
+
+**Root Cause**:
+- Frontend was using `minutesRemaining` from backend and doing local countdown
+- Upon re-login, backend recalculates `minutesRemaining` from `(endTime - now) / 60`
+- Since time has passed server-side, calculation was correct, but frontend received new value
+- This created an inconsistent countdown experience
+
+#### Solution
+Changed the timing calculation strategy from **counter-based** to **timestamp-based**:
+
+**Before (Broken)**:
+```javascript
+// Fetch once
+const minutesRemaining = response.data.minutesRemaining; // e.g., 59
+setTimeRemaining(minutesRemaining * 60); // Convert to seconds (3540)
+// Then decrement locally every second
+setInterval(() => setTimeRemaining(prev => prev - 1), 1000);
+// Problem: On re-login, minutesRemaining recalculated from database
+```
+
+**After (Fixed)**:
+```javascript
+// Calculate from endTime, not minutesRemaining
+const endTimeMs = new Date(session.endTime).getTime();
+const nowMs = Date.now();
+const remainingMs = Math.max(0, endTimeMs - nowMs);
+setTimeRemaining(Math.ceil(remainingMs / 1000));
+
+// Decrement locally every second for smooth UI
+setInterval(() => setTimeRemaining(prev => prev - 1), 1000);
+
+// Sync with server every 30 seconds to handle clock drift
+setInterval(() => {
+  const endTimeMs = new Date(session.endTime).getTime();
+  const nowMs = Date.now();
+  const remainingMs = Math.max(0, endTimeMs - nowMs);
+  setTimeRemaining(Math.ceil(remainingMs / 1000));
+}, 30000);
+```
+
+#### Files Modified
+
+1. **Frontend Components**:
+   - `hooks/useSession.ts` - Updated `fetchActiveSession()` and `extendSession()`
+   - `components/ActiveSessionsTab.tsx` - Updated timer initialization and sync logic
+   - `api/serviceApi.ts` - Made `endTime` required field in Session interface
+
+2. **Changes Made**:
+   - ✓ Removed dependency on `minutesRemaining` from countdown logic
+   - ✓ Calculate remaining time from `endTime - currentTime`
+   - ✓ Added 30-second server sync to handle clock drift
+   - ✓ Maintain smooth 1-second local countdown for UI responsiveness
+   - ✓ Handle timezone differences automatically (all times converted to milliseconds)
+
+#### Benefits
+- ✅ **Consistent**: Timer always reflects actual server time
+- ✅ **Persistent**: Logging out/in doesn't reset the timer
+- ✅ **Multi-device Safe**: Works correctly if student uses multiple devices
+- ✅ **Clock Drift Resistant**: Server sync every 30 seconds corrects any skew
+- ✅ **Smooth UX**: Still has smooth 1-second countdown (not jumpy)
+
+#### Testing
+- Tested with manual logout/login cycles
+- Verified timer continues from correct position
+- Confirmed 30-second sync keeps time accurate
+- Checked edge cases: Timer reaches 00:00, session expires
+
+---
+
+## [May 30, 2026] - Phase 5.1: Reservation History & Enhanced Admin Dashboard ✅
+
+### 🎯 Phase 5.1 Overview
+Enhanced the admin dashboard with a dedicated reservation history feature. Admins can now view separate **Active Pending Requests** (requiring action) and **Reservation History** (completed, cancelled, or expired) for all users. This separation improves workflow efficiency and provides administrators with complete audit trails.
+
+### 🏗️ New Features
+
+#### 1. AdminReservationHistory Component (NEW)
+**File**: `components/AdminReservationHistory.tsx`
+**Purpose**: Displays complete reservation history for all users (CONFIRMED, CANCELLED, EXPIRED)
+**Features**:
+- Shows all non-active reservations across the entire system
+- Status filtering buttons (All, Confirmed, Cancelled, Expired)
+- Count badges on filter buttons for quick overview
+- Cards display:
+  - Reservation ID and user/computer identifiers
+  - Status with color coding and icons:
+    - ✓ Green: CONFIRMED
+    - ✕ Red: CANCELLED
+    - ⏱️ Purple: EXPIRED
+  - Reserved and expiration timestamps
+  - Duration calculation in minutes
+- Read-only view (no action buttons) for historical records
+- Empty state messaging with context-aware text
+- Responsive card layout
+
+**API Calls**:
+- `GET /reservations/history` - Fetch all non-active reservations
+
+**User Flow**:
+```
+Admin Dashboard → History Tab
+  ↓
+Shows all CONFIRMED, CANCELLED, EXPIRED reservations
+Shows filters: All (523), Confirmed (412), Cancelled (98), Expired (13)
+  ↓
+Click "Cancelled" filter
+  ↓
+Shows only cancelled reservations with timestamps
+  ↓
+Admin can review cancellation patterns and usage data
+```
+
+#### 2. Updated PendingReservations Component
+**File**: `components/PendingReservations.tsx`
+**Changes**:
+- Now filters to show **ACTIVE reservations ONLY** (was showing ACTIVE + CONFIRMED)
+- Updated heading to "⏱️ Pending Requests (Active Only)"
+- Simplified action buttons:
+  - Accept - Move to CONFIRMED (starts session)
+  - Edit Time - Adjust reservation expiration
+  - Reject - Cancel reservation
+- Removed conditional rendering since all displayed reservations are ACTIVE
+- Clearer separation of concerns: Pending vs History
+
+#### 3. Admin Dashboard Tab System Enhancement
+**File**: `pages/AdminDashboard.tsx`
+**Updates**:
+- Added new "History" tab state
+- New tab type: `'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history'`
+- Updated tab rendering logic
+- Sidebar now shows 5 menu items instead of 4
+
+**Updated Sidebar Navigation**:
+1. Dashboard - Stats overview
+2. Pending Request - Active reservations requiring action
+3. Active Sessions - Real-time session monitoring
+4. Extensions - Extension request approvals
+5. **History** - NEW - Complete reservation audit log
+
+#### 4. Updated AdminSidebarNav Component
+**File**: `components/AdminSidebarNav.tsx`
+**Changes**:
+- Added history menu item with 📚 icon
+- Updated interface types to include 'history'
+- Updated click handler to support new tab type
+- Maintains responsive behavior and mobile toggle
+
+#### 5. Service API Enhancement
+**File**: `api/serviceApi.ts`
+**Updates**:
+- Added new method: `getReservationHistory(): Promise<Reservation[]>`
+- Calls `GET /reservations/history` endpoint
+- Returns all non-active reservations with proper error handling
+
+#### 6. Backend Service Enhancement (Java)
+**Files**: 
+- `service/IReservationService.java` - Added interface method
+- `service/impl/ReservationServiceImpl.java` - Implemented filtering logic
+- `controller/ReservationController.java` - Added new endpoint
+
+**New Endpoint**:
+- `GET /api/reservations/history` - Returns all CONFIRMED, CANCELLED, EXPIRED reservations
+
+**Implementation Details**:
+```java
+@GetMapping("/history")
+public ResponseEntity<List<ReservationDTO>> getReservationHistory() {
+    List<Reservation> reservations = reservationService.getReservationHistory();
+    return ResponseEntity.ok(reservations.stream()
+        .map(reservationService::toDTO)
+        .toList());
+}
+
+// Service method filters out ACTIVE reservations
+public List<Reservation> getReservationHistory() {
+    return reservationRepository.findAll().stream()
+        .filter(r -> !r.getStatus().equals(Reservation.ReservationStatus.ACTIVE))
+        .collect(Collectors.toList());
+}
+```
+
+### 📊 Workflow Improvements
+
+**Before** (Mixed Responsibilities):
+```
+Admin Dashboard → Pending Reservations
+  ↓
+Shows: ACTIVE (to process), CONFIRMED (already processed)
+  ↓
+Confusing: which need action? which are done?
+```
+
+**After** (Separated Concerns):
+```
+Admin Dashboard
+  ├→ Pending Request Tab
+  │    ↓
+  │    Shows: ACTIVE ONLY
+  │    Action: Accept, Edit Time, Reject
+  │    Purpose: Immediate action required
+  │
+  └→ History Tab
+       ↓
+       Shows: CONFIRMED, CANCELLED, EXPIRED
+       Action: View/Filter only
+       Purpose: Audit trail & analytics
+```
+
+### 🧪 Testing
+- Added unit tests for new backend endpoint
+- Verified filtering logic for reservation statuses
+- Tested API response for empty history
+- Tested frontend component with various states
+
+### ✅ Business Rules Applied
+Following project context rules:
+1. ✓ Business First: "Admin wants to see pending work vs completed work"
+2. ✓ KISS: Each component has single responsibility
+3. ✓ DRY: Filtering logic centralized in service layer
+4. ✓ Service answers one question: "What is the reservation history?"
+5. ✓ Repository only handles data access
+6. ✓ Controller passes to service (no business logic)
+
+---
+
 ## [May 30, 2026] - Phase 5: Admin Dashboard & WebSocket Notifications ✅
 
 ### 🎯 Phase 5 Overview

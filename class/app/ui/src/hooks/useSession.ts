@@ -24,13 +24,20 @@ export const useSession = () => {
     try {
       const response = await apiClient.get<Session>('/sessions/user/active');
       setSession(response.data);
-      // Convert minutes to seconds for countdown
-      setTimeRemaining(response.data.minutesRemaining * 60);
+      // Calculate remaining time based on endTime (not minutesRemaining)
+      // This ensures we use the server's time rather than relying on local countdown
+      if (response.data.endTime) {
+        const endTimeMs = new Date(response.data.endTime).getTime();
+        const nowMs = Date.now();
+        const remainingMs = Math.max(0, endTimeMs - nowMs);
+        setTimeRemaining(Math.ceil(remainingMs / 1000)); // Convert to seconds, round up
+      }
     } catch (err: any) {
       if (err.response?.status !== 204) {
         setError(err.response?.data?.message || 'Failed to fetch session');
       }
       setSession(null);
+      setTimeRemaining(0);
     } finally {
       setLoading(false);
     }
@@ -68,8 +75,13 @@ export const useSession = () => {
         durationMinutes,
       });
       setSession(response.data);
-      // Convert minutes to seconds for countdown
-      setTimeRemaining(response.data.minutesRemaining * 60);
+      // Calculate remaining time based on endTime from server response
+      if (response.data.endTime) {
+        const endTimeMs = new Date(response.data.endTime).getTime();
+        const nowMs = Date.now();
+        const remainingMs = Math.max(0, endTimeMs - nowMs);
+        setTimeRemaining(Math.ceil(remainingMs / 1000)); // Convert to seconds, round up
+      }
       return { success: true, data: response.data };
     } catch (err: any) {
       const message = err.response?.data?.message || 'Failed to extend session';
@@ -78,15 +90,29 @@ export const useSession = () => {
     }
   }, []);
 
-  // Auto-update time remaining
+  // Auto-update time remaining and periodically sync with server
   useEffect(() => {
     if (!session || session.status !== 'ACTIVE') return;
 
-    const interval = setInterval(() => {
+    // Local countdown interval (updates every second)
+    const countdownInterval = setInterval(() => {
       setTimeRemaining((prev) => Math.max(0, prev - 1));
     }, 1000);
 
-    return () => clearInterval(interval);
+    // Sync with server every 30 seconds to handle clock drift
+    const syncInterval = setInterval(() => {
+      if (session.endTime) {
+        const endTimeMs = new Date(session.endTime).getTime();
+        const nowMs = Date.now();
+        const remainingMs = Math.max(0, endTimeMs - nowMs);
+        setTimeRemaining(Math.ceil(remainingMs / 1000));
+      }
+    }, 30000);
+
+    return () => {
+      clearInterval(countdownInterval);
+      clearInterval(syncInterval);
+    };
   }, [session]);
 
   // Format seconds to MM:SS display

@@ -21,7 +21,7 @@ const PendingReservations: React.FC<PendingReservationsProps> = ({ onRefresh }) 
     try {
       setLoading(true);
       const data = await serviceApi.reservations.getAllReservations();
-      const pending = data.filter(r => r.status === 'ACTIVE' || r.status === 'CONFIRMED');
+      const pending = data.filter(r => r.status === 'ACTIVE');
       setReservations(pending);
       setError(null);
     } catch (err: any) {
@@ -84,7 +84,7 @@ const PendingReservations: React.FC<PendingReservationsProps> = ({ onRefresh }) 
 
   return (
     <div className={styles['pending-reservations']}>
-      <h2>Pending Reservations</h2>
+      <h2>⏱️ Pending Requests (Active Only)</h2>
       {error && <div style={{ color: '#fca5a5', marginBottom: '1rem' }}>⚠️ {error}</div>}
 
       {reservations.length > 0 ? (
@@ -143,30 +143,26 @@ const PendingReservations: React.FC<PendingReservationsProps> = ({ onRefresh }) 
               </div>
 
               <div className={styles['card-actions']}>
-                {reservation.status === 'ACTIVE' && (
-                  <>
-                    <button
-                      className={styles['accept-btn']}
-                      onClick={() => handleAccept(reservation.id)}
-                    >
-                      ✓ Accept
-                    </button>
-                    <button
-                      className={styles['edit-btn']}
-                      onClick={() => {
-                        setEditingId(reservation.id);
-                        setEditTime(new Date(reservation.expiresAt).toISOString().slice(0, 16));
-                      }}
-                    >
-                      ⏱️ Edit Time
-                    </button>
-                  </>
-                )}
+                <button
+                  className={styles['accept-btn']}
+                  onClick={() => handleAccept(reservation.id)}
+                >
+                  ✓ Accept
+                </button>
+                <button
+                  className={styles['edit-btn']}
+                  onClick={() => {
+                    setEditingId(reservation.id);
+                    setEditTime(new Date(reservation.expiresAt).toISOString().slice(0, 16));
+                  }}
+                >
+                  ⏱️ Edit Time
+                </button>
                 <button
                   className={styles['reject-btn']}
                   onClick={() => handleCancel(reservation.id)}
                 >
-                  ✕ Cancel
+                  ✕ Reject
                 </button>
               </div>
             </div>

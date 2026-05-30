@@ -12,16 +12,22 @@ public record ReservationDTO(
     Long computerId,
     String status,
     Instant reservedAt,
-    Instant expiresAt
+    Instant expiresAt,
+    String userName
 ) {
-    public static ReservationDTO fromEntity(Reservation reservation) {
+    public static ReservationDTO fromEntity(Reservation reservation, String userName) {
         return new ReservationDTO(
             reservation.getId(),
             reservation.getUserId(),
             reservation.getComputerId(),
             reservation.getStatus().toString(),
             reservation.getReservedAt(),
-            reservation.getExpiresAt()
+            reservation.getExpiresAt(),
+            userName
         );
+    }
+
+    public static ReservationDTO fromEntity(Reservation reservation) {
+        return fromEntity(reservation, "");
     }
 }

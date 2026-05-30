@@ -14,6 +14,7 @@ public interface IReservationService {
     Reservation getActiveReservationByUserId(Long userId);
     List<Reservation> getUserReservations(Long userId);
     List<Reservation> getAllReservations();
+    List<Reservation> getReservationHistory();
     void cancelReservation(Long reservationId);
     void confirmReservation(Long reservationId);
     void expireReservation(Long reservationId);

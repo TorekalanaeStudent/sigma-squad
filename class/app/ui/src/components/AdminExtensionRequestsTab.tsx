@@ -11,7 +11,6 @@ interface ExtensionRequest {
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
   requestedAt: string;
   respondedAt?: string;
-  durationMinutes: number;
 }
 
 export const AdminExtensionRequestsTab: React.FC = () => {
@@ -31,7 +30,7 @@ export const AdminExtensionRequestsTab: React.FC = () => {
     setError(null);
     try {
       const response = await serviceApi.extensions.getPendingExtensionRequests();
-      setExtensionRequests(response.data);
+      setExtensionRequests(response);
     } catch (err: any) {
       setError(err.message || 'Failed to load extension requests');
     } finally {
@@ -120,10 +119,6 @@ export const AdminExtensionRequestsTab: React.FC = () => {
                     <span className={styles['value']}>
                       {new Date(req.requestedAt).toLocaleTimeString()}
                     </span>
-                  </div>
-                  <div className={styles['detail-item']}>
-                    <span className={styles['label']}>Extension Duration:</span>
-                    <span className={styles['value']}>{req.durationMinutes} minutes</span>
                   </div>
                 </div>
 

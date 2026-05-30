@@ -21,6 +21,23 @@ public class NotificationServiceImpl implements INotificationService {
         Notification notification = Notification.builder()
                 .extensionRequestId(extensionRequestId)
                 .adminId(adminId)
+                .title("📌 Extension Request")
+                .message("New extension request awaiting approval")
+                .type("INFO")
+                .isRead(false)
+                .build();
+        return notificationRepository.save(notification);
+    }
+
+    @Override
+    public Notification createReservationNotification(Long reservationId, String title, String message, String type) {
+        // Send to admin user (ID = 1)
+        Notification notification = Notification.builder()
+                .reservationId(reservationId)
+                .adminId(1L)
+                .title(title)
+                .message(message)
+                .type(type)
                 .isRead(false)
                 .build();
         return notificationRepository.save(notification);

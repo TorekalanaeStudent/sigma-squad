@@ -9,6 +9,8 @@ import com.sigma_squad.computify.reservation.repository.ReservationRepository;
 import com.sigma_squad.computify.computer.service.IComputerService;
 import com.sigma_squad.computify.history.service.IAuditLogService;
 import com.sigma_squad.computify.session.service.ISessionService;
+import com.sigma_squad.computify.auth.repository.UserRepository;
+import com.sigma_squad.computify.notification.service.INotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ public class ReservationServiceImpl implements IReservationService {
     private final IComputerService computerService;
     private final ISessionService sessionService;
     private final IAuditLogService auditLogService;
+    private final UserRepository userRepository;
+    private final INotificationService notificationService;
 
     @Override
     public Reservation createReservation(Long userId, Long computerId) {
@@ -59,6 +63,15 @@ public class ReservationServiceImpl implements IReservationService {
 
         auditLogService.log(userId, saved.getId(), "CREATE", "Reservation created for Computer " + computerId);
 
+        // Create notification for admin
+        String userName = userRepository.findById(userId).map(u -> u.getName()).orElse("User " + userId);
+        notificationService.createReservationNotification(
+            saved.getId(),
+            "📋 New Reservation",
+            userName + " reserved Computer " + computerId,
+            "INFO"
+        );
+
         return saved;
     }
 
@@ -82,6 +95,14 @@ public class ReservationServiceImpl implements IReservationService {
     @Override
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
+    }
+
+    @Override
+    public List<Reservation> getReservationHistory() {
+        // Return all reservations except ACTIVE ones (CONFIRMED, CANCELLED, EXPIRED)
+        return reservationRepository.findAll().stream()
+            .filter(r -> !r.getStatus().equals(Reservation.ReservationStatus.ACTIVE))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -156,6 +177,11 @@ public class ReservationServiceImpl implements IReservationService {
 
     @Override
     public ReservationDTO toDTO(Reservation reservation) {
-        return ReservationDTO.fromEntity(reservation);
+        // Fetch user name from database
+        String userName = userRepository.findById(reservation.getUserId())
+            .map(user -> user.getName())
+            .orElse("Unknown User");
+        
+        return ReservationDTO.fromEntity(reservation, userName);
     }
 }

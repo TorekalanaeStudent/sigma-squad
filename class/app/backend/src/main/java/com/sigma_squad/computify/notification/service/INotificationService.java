@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface INotificationService {
     Notification createNotification(Long extensionRequestId, Long adminId);
+    Notification createReservationNotification(Long reservationId, String title, String message, String type);
     Notification getNotificationById(Long id);
     List<Notification> getUnreadNotificationsForAdmin(Long adminId);
     List<Notification> getAllNotificationsForAdmin(Long adminId);

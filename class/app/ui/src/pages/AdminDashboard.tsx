@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AuthService from '../api/authApi';
 import AdminSidebarNav from '../components/AdminSidebarNav';
 import PendingReservations from '../components/PendingReservations';
+import AdminReservationHistory from '../components/AdminReservationHistory';
 import PendingExtensions from '../components/PendingExtensions';
 import ActiveSessionsTab from '../components/ActiveSessionsTab';
 import NotificationToast from '../components/NotificationToast';
@@ -12,8 +13,8 @@ import styles from '../styles/adminDashboard.module.css';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const user = AuthService.getCurrentUser();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'sessions' | 'extensions'>('dashboard');
-  const { notifications, isConnected, clearNotification } = useWebSocketNotifications();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history'>('dashboard');
+  const { notifications, clearNotification } = useWebSocketNotifications();
 
   const handleLogout = () => {
     AuthService.logout();
@@ -90,13 +91,16 @@ const AdminDashboard: React.FC = () => {
 
         {/* Extensions Tab */}
         {activeTab === 'extensions' && <PendingExtensions />}
+
+        {/* Reservation History Tab */}
+        {activeTab === 'history' && <AdminReservationHistory />}
       </main>
 
       {/* Notification Toasts */}
       <div className={styles['notification-container']}>
         {notifications.map((notification, index) => (
           <NotificationToast
-            key={`${notification.timestamp}-${index}`}
+            key={`${notification.createdAt}-${index}`}
             notification={notification}
             index={index}
             onClose={() => clearNotification(index)}

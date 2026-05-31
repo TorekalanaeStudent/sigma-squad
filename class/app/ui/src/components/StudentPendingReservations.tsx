@@ -59,7 +59,7 @@ const StudentPendingReservations: React.FC<StudentPendingReservationsProps> = ({
 
   return (
     <div className={styles['reservations']}>
-      <h2>Pending Reservations</h2>
+      <h2>Pending Reservation</h2>
       {error && <div className={styles['error']}>{error}</div>}
 
       {reservations.length > 0 ? (

@@ -13,12 +13,17 @@ interface SessionRecord {
   minutesused: number;
 }
 
+type SortColumn = keyof SessionRecord | null;
+type SortOrder = 'asc' | 'desc';
+
 const AuditLog: React.FC = () => {
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [filteredSessions, setFilteredSessions] = useState<SessionRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   useEffect(() => {
     fetchSessions();
@@ -52,6 +57,47 @@ const AuditLog: React.FC = () => {
       (s.computernumber?.toLowerCase() || '').includes(term) ||
       s.id.toString().includes(term)
     ));
+  };
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Toggle sort order if clicking the same column
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new column and default to ascending
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const getSortedSessions = () => {
+    if (!sortColumn) return filteredSessions;
+
+    const sorted = [...filteredSessions].sort((a, b) => {
+      const aVal = a[sortColumn];
+      const bVal = b[sortColumn];
+
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+
+      if (typeof aVal === 'string') {
+        const comparison = aVal.localeCompare(bVal as string);
+        return sortOrder === 'asc' ? comparison : -comparison;
+      }
+
+      if (typeof aVal === 'number') {
+        return sortOrder === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+      }
+
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getSortIndicator = (column: SortColumn) => {
+    if (sortColumn !== column) return '';
+    return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
 
   const exportToExcel = () => {
@@ -100,19 +146,19 @@ const AuditLog: React.FC = () => {
         <table className={styles['audit-table']}>
           <thead>
             <tr>
-              <th>Session ID</th>
-              <th>User Name</th>
-              <th>Computer</th>
-              <th>Start Time</th>
-              <th>End Time</th>
-              <th>Minutes Used</th>
+              <th onClick={() => handleSort('id')} style={{ cursor: 'pointer' }}>Session ID{getSortIndicator('id')}</th>
+              <th onClick={() => handleSort('username')} style={{ cursor: 'pointer' }}>User Name{getSortIndicator('username')}</th>
+              <th onClick={() => handleSort('computernumber')} style={{ cursor: 'pointer' }}>Computer{getSortIndicator('computernumber')}</th>
+              <th onClick={() => handleSort('starttime')} style={{ cursor: 'pointer' }}>Start Time{getSortIndicator('starttime')}</th>
+              <th onClick={() => handleSort('endtime')} style={{ cursor: 'pointer' }}>End Time{getSortIndicator('endtime')}</th>
+              <th onClick={() => handleSort('minutesused')} style={{ cursor: 'pointer' }}>Minutes Used{getSortIndicator('minutesused')}</th>
             </tr>
           </thead>
           <tbody>
             {filteredSessions.length === 0 ? (
               <tr><td colSpan={6} className={styles['empty']}>No sessions found</td></tr>
             ) : (
-              filteredSessions.map(s => (
+              getSortedSessions().map(s => (
                 <tr key={s.id}>
                   <td>#{s.id}</td>
                   <td>{s.username || 'N/A'}</td>

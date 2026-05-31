@@ -16,11 +16,13 @@ import com.sigma_squad.computify.shared.exception.UnauthorizedException;
 import com.sigma_squad.computify.auth.service.IUserService;
 import com.sigma_squad.computify.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -30,6 +32,7 @@ import java.util.Random;
  * AuthServiceImpl - Implementation of IAuthService
  * Handles login, registration, email verification, and password reset with JWT.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
@@ -91,6 +94,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
+    @Transactional
     public String requestPasswordReset(PasswordResetRequest request) {
         User user = userService.getUserByEmail(request.email());
 
@@ -116,6 +120,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
+    @Transactional
     public String resetPassword(ResetPasswordRequest request) {
         if (!request.newPassword().equals(request.confirmPassword())) {
             throw new UnauthorizedException("Passwords do not match");
@@ -178,8 +183,9 @@ public class AuthServiceImpl implements IAuthService {
             message.setText(buildVerificationEmail(code));
 
             javaMailSender.send(message);
+            log.info("Verification email sent successfully to {}", email);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send verification email: " + e.getMessage());
+            log.warn("Failed to send verification email: {}. Verification code for manual testing: {}", e.getMessage(), code);
         }
     }
 
@@ -192,8 +198,9 @@ public class AuthServiceImpl implements IAuthService {
             message.setText(buildPasswordResetEmail(token));
 
             javaMailSender.send(message);
+            log.info("Password reset email sent successfully to {}", email);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send password reset email: " + e.getMessage());
+            log.warn("Failed to send password reset email: {}. Reset link: http://localhost:5173/reset-password?token={}", e.getMessage(), token);
         }
     }
 

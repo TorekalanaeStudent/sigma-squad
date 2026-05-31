@@ -90,7 +90,7 @@ const CurrentSessionDisplay: React.FC<CurrentSessionDisplayProps> = ({ onRefresh
 
   // Warning color for low time (5 minutes = 300 seconds)
   const isLowTime = timeRemaining <= 300;
-  const timerColor = isLowTime ? '#dc2626' : '#8b5cf6';
+  const timerColor = isLowTime ? '#dc2626' : '#3b82f6';
   const displayTime = formatTime(timeRemaining);
 
   return (

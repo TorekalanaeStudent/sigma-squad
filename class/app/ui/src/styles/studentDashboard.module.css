@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0e27 0%, #111829 50%, #1a1f3a 100%);
+  background: #0d1520;
   color: #e5e7eb;
   margin-left: 250px;
   transition: margin-left 0.3s ease;
@@ -14,7 +14,7 @@
   align-items: center;
   padding: 1.5rem 2rem;
   background: rgba(17, 24, 41, 0.8);
-  border-bottom: 2px solid #8b5cf6;
+  border-bottom: 2px solid #1e40af;
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -30,7 +30,7 @@
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #8b5cf6;
+  color: #1e40af;
 }
 
 .header-left h1 {
@@ -69,7 +69,7 @@
 
 .chatbot-btn {
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: #1e40af;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -80,9 +80,9 @@
 }
 
 .chatbot-btn:hover {
-  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  background: #1e3a8a;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.4);
 }
 
 .main-content {
@@ -91,6 +91,7 @@
   max-width: 100%;
   margin: 0;
   width: 100%;
+  overflow-y: auto;
 }
 
 .welcome-section {
@@ -117,8 +118,8 @@
 }
 
 .stat-card {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(30, 64, 175, 0.1);
+  border: 1px solid rgba(30, 64, 175, 0.3);
   border-radius: 0.75rem;
   padding: 1.5rem;
   display: flex;
@@ -129,8 +130,8 @@
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
-  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+  border-color: rgba(30, 64, 175, 0.5);
 }
 
 .stat-icon {
@@ -160,14 +161,14 @@
 
 .info-card {
   background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(30, 64, 175, 0.3);
   border-radius: 0.75rem;
   padding: 1.5rem;
 }
 
 .info-card h3 {
   margin: 0 0 1rem 0;
-  color: #8b5cf6;
+  color: #1e40af;
   font-size: 1.25rem;
 }
 
@@ -180,7 +181,7 @@
 .info-card li {
   padding: 0.5rem 0;
   color: #d1d5db;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  border-bottom: 1px solid rgba(30, 64, 175, 0.1);
 }
 
 .info-card li:last-child {
@@ -188,7 +189,7 @@
 }
 
 .info-card strong {
-  color: #8b5cf6;
+  color: #1e40af;
 }
 
 .actions-section {
@@ -210,15 +211,16 @@
 
 .action-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
 }
 
 .footer {
   text-align: center;
   padding: 1rem 2rem;
-  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  border-top: 1px solid rgba(30, 64, 175, 0.2);
   color: #6b7280;
   font-size: 0.9rem;
+  margin-top: auto;
 }
 
 /* Tab Navigation */
@@ -226,7 +228,7 @@
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+  border-bottom: 2px solid rgba(30, 64, 175, 0.2);
   padding: 0 0 1rem 0;
 }
 
@@ -247,7 +249,7 @@
 }
 
 .tab-btn.active {
-  color: #8b5cf6;
+  color: #1e40af;
 }
 
 .tab-btn.active::after {
@@ -257,7 +259,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%);
+  background: #1e40af;
 }
 
 @media (max-width: 1024px) {

@@ -2,7 +2,10 @@ package com.sigma_squad.computify.auth.controller;
 
 import com.sigma_squad.computify.auth.dto.AuthResponse;
 import com.sigma_squad.computify.auth.dto.LoginRequest;
+import com.sigma_squad.computify.auth.dto.PasswordResetRequest;
 import com.sigma_squad.computify.auth.dto.RegisterRequest;
+import com.sigma_squad.computify.auth.dto.ResetPasswordRequest;
+import com.sigma_squad.computify.auth.dto.VerifyEmailRequest;
 import com.sigma_squad.computify.auth.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,5 +29,23 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestBody VerifyEmailRequest request) {
+        String message = authService.verifyEmail(request);
+        return ResponseEntity.ok(message);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody PasswordResetRequest request) {
+        String message = authService.requestPasswordReset(request);
+        return ResponseEntity.ok(message);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        String message = authService.resetPassword(request);
+        return ResponseEntity.ok(message);
     }
 }

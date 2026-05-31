@@ -44,7 +44,7 @@ const ExtensionRequestButton: React.FC<ExtensionRequestButtonProps> = ({ session
         style={{
           width: '100%',
           padding: '0.75rem',
-          background: loading ? '#94a3b8' : 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+          background: loading ? '#94a3b8' : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)',
           border: 'none',
           borderRadius: '8px',
           color: '#ffffff',

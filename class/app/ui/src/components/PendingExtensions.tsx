@@ -4,9 +4,10 @@ import styles from '../styles/adminDashboard.module.css';
 
 interface PendingExtensionsProps {
   onRefresh?: () => void;
+  highlightedId?: number | null;
 }
 
-const PendingExtensions: React.FC<PendingExtensionsProps> = ({ onRefresh }) => {
+const PendingExtensions: React.FC<PendingExtensionsProps> = ({ onRefresh, highlightedId }) => {
   const [extensionRequests, setExtensionRequests] = useState<ExtensionRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,8 +64,14 @@ const PendingExtensions: React.FC<PendingExtensionsProps> = ({ onRefresh }) => {
         <div className={styles['extensions-list']}>
           {extensionRequests.map((request) => (
             <div
+              id={`extension-${request.id}`}
               key={request.id}
               className={styles['extension-card']}
+              style={{
+                backgroundColor: highlightedId === request.id ? 'rgba(139, 92, 246, 0.15)' : undefined,
+                borderColor: highlightedId === request.id ? 'rgba(139, 92, 246, 0.8)' : undefined,
+                boxShadow: highlightedId === request.id ? '0 0 20px rgba(139, 92, 246, 0.4)' : undefined,
+              }}
             >
               <div className={styles['card-header']}>
                 <div>

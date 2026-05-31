@@ -9,11 +9,32 @@ const ActiveSessionsTab: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [timers, setTimers] = useState<{ [key: number]: number }>({});
   const [removingSessionId, setRemovingSessionId] = useState<number | null>(null);
+  const [userNameCache, setUserNameCache] = useState<{ [key: number]: string }>({});
+
+  // Fetch all reservations to build user name cache
+  const buildUserCache = async () => {
+    try {
+      const reservations = await serviceApi.reservations.getAllReservations();
+      const cache: { [key: number]: string } = {};
+      reservations.forEach((res) => {
+        if (res.userName) {
+          cache[res.userId] = res.userName;
+        }
+      });
+      setUserNameCache(cache);
+    } catch (err: any) {
+      console.error('Failed to build user cache:', err);
+    }
+  };
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
+    buildUserCache();
     fetchActiveSessions();
-    const interval = setInterval(fetchActiveSessions, 30000);
+    const interval = setInterval(() => {
+      buildUserCache();
+      fetchActiveSessions();
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -146,7 +167,7 @@ const ActiveSessionsTab: React.FC = () => {
               <div className={styles['session-details']}>
                 <div className={styles['detail-row']}>
                   <span className={styles['detail-label']}>Student:</span>
-                  <span className={styles['detail-value']}>{session.userName || `User ${session.userId}`}</span>
+                  <span className={styles['detail-value']}>{userNameCache[session.userId] || session.userName || `User ${session.userId}`}</span>
                 </div>
 
                 <div className={styles['detail-row']}>

@@ -13,6 +13,7 @@ public interface IUserService {
     User getUserByEmail(String email);
     User getUserById(Long id);
     User getUserByStudentId(String studentId);
+    User saveUser(User user);
     UserDTO toDTO(User user);
     List<UserDTO> getAllUsers();
 }

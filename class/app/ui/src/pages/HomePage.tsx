@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Logo from '../components/Logo';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import AuthService from '../api/authApi';
@@ -32,10 +31,8 @@ const HomePage: React.FC = () => {
       {/* Left Side - Branding & Features */}
       <div className={styles['left-section']}>
         <div className={styles['brand-container']}>
-          <Logo size="large" />
-
           <div className={styles['tagline']}>
-            <h2>Welcome to CLASS</h2>
+            <h2><span className={styles['welcome-text']}>Welcome to </span><span className={styles['class-text']}>CLASS</span></h2>
             <p>Computer Library Access System</p>
           </div>
 

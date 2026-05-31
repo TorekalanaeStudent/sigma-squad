@@ -37,6 +37,10 @@ public class User {
     @Builder.Default
     private Boolean isAdmin = false;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean isVerified = false;
+
     @Column(nullable = false)
     @Builder.Default
     private Instant createdAt = Instant.now();

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styles from '../styles/adminSidebarNav.module.css';
 
 interface AdminSidebarNavProps {
-  activeTab: 'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history';
-  onTabChange: (tab: 'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history') => void;
+  activeTab: 'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history' | 'audit';
+  onTabChange: (tab: 'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history' | 'audit') => void;
 }
 
 const AdminSidebarNav: React.FC<AdminSidebarNavProps> = ({ activeTab, onTabChange }) => {
@@ -15,6 +15,7 @@ const AdminSidebarNav: React.FC<AdminSidebarNavProps> = ({ activeTab, onTabChang
     { id: 'sessions', label: 'Active Sessions', icon: '🚀' },
     { id: 'extensions', label: 'Extensions', icon: '⏱️' },
     { id: 'history', label: 'History', icon: '📚' },
+    { id: 'audit', label: 'Audit Log', icon: '📝' },
   ];
 
   return (
@@ -37,11 +38,10 @@ const AdminSidebarNav: React.FC<AdminSidebarNavProps> = ({ activeTab, onTabChang
               key={item.id}
               className={`${styles['menu-item']} ${activeTab === item.id ? styles['active'] : ''}`}
               onClick={() => {
-                onTabChange(item.id as 'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history');
+                onTabChange(item.id as 'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history' | 'audit');
                 if (window.innerWidth < 768) setIsOpen(false);
               }}
             >
-              <span className={styles['icon']}>{item.icon}</span>
               <span className={styles['label']}>{item.label}</span>
             </button>
           ))}

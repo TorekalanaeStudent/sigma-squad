@@ -2,7 +2,7 @@
   padding: 1.5rem;
   background: rgba(15, 20, 25, 0.5);
   border-radius: 1rem;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   margin-bottom: 2rem;
   min-height: 280px;
   display: flex;
@@ -12,11 +12,11 @@
 
 .session-card {
   width: 100%;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-  border: 2px solid rgba(139, 92, 246, 0.3);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+  border: 2px solid rgba(59, 130, 246, 0.3);
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
 }
 
 .session-card h3 {
@@ -36,7 +36,7 @@
   padding: 1rem;
   background: rgba(17, 24, 41, 0.5);
   border-radius: 0.75rem;
-  border-left: 4px solid #8b5cf6;
+  border-left: 4px solid #3b82f6;
 }
 
 .info-row {
@@ -44,7 +44,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
 }
 
 .info-row:last-child {
@@ -93,7 +93,7 @@
 
 .extension-section {
   padding-top: 1rem;
-  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  border-top: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 /* Session Actions - Phase 4 */
@@ -122,14 +122,14 @@
 }
 
 .extend-btn {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
   color: white;
   border: 2px solid rgba(139, 92, 246, 0.5);
 }
 
 .extend-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
-  border-color: #a78bfa;
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  border-color: #60a5fa;
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
 }

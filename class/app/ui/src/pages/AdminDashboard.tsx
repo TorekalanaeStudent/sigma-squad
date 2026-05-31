@@ -6,6 +6,10 @@ import PendingReservations from '../components/PendingReservations';
 import AdminReservationHistory from '../components/AdminReservationHistory';
 import PendingExtensions from '../components/PendingExtensions';
 import ActiveSessionsTab from '../components/ActiveSessionsTab';
+import AdminPendingOverview from '../components/AdminPendingOverview';
+import AdminExtensionsOverview from '../components/AdminExtensionsOverview';
+import AdminActiveSessionsOverview from '../components/AdminActiveSessionsOverview';
+import AuditLog from '../components/AuditLog';
 import NotificationToast from '../components/NotificationToast';
 import { useWebSocketNotifications } from '../hooks/useWebSocketNotifications';
 import styles from '../styles/adminDashboard.module.css';
@@ -13,12 +17,36 @@ import styles from '../styles/adminDashboard.module.css';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const user = AuthService.getCurrentUser();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'sessions' | 'extensions' | 'history' | 'audit'>('dashboard');
+  const [highlightedPendingId, setHighlightedPendingId] = useState<number | null>(null);
+  const [highlightedExtensionId, setHighlightedExtensionId] = useState<number | null>(null);
   const { notifications, clearNotification } = useWebSocketNotifications();
 
   const handleLogout = () => {
     AuthService.logout();
     navigate('/');
+  };
+
+  const handleNavigateToPending = (reservationId: number) => {
+    setHighlightedPendingId(reservationId);
+    setActiveTab('pending');
+    setTimeout(() => {
+      const element = document.getElementById(`pending-${reservationId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  };
+
+  const handleNavigateToExtensions = (extensionId: number) => {
+    setHighlightedExtensionId(extensionId);
+    setActiveTab('extensions');
+    setTimeout(() => {
+      const element = document.getElementById(`extension-${extensionId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   };
 
   useEffect(() => {
@@ -80,20 +108,28 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
             </section>
+
+            {/* Quick Overview Sections */}
+            <AdminPendingOverview onNavigateToPending={handleNavigateToPending} onRefresh={() => {}} />
+            <AdminActiveSessionsOverview onRefresh={() => {}} />
+            <AdminExtensionsOverview onNavigateToExtensions={handleNavigateToExtensions} onRefresh={() => {}} />
           </>
         )}
 
         {/* Pending Reservations Tab */}
-        {activeTab === 'pending' && <PendingReservations />}
+        {activeTab === 'pending' && <PendingReservations highlightedId={highlightedPendingId} />}
 
         {/* Active Sessions Tab */}
         {activeTab === 'sessions' && <ActiveSessionsTab />}
 
         {/* Extensions Tab */}
-        {activeTab === 'extensions' && <PendingExtensions />}
+        {activeTab === 'extensions' && <PendingExtensions highlightedId={highlightedExtensionId} />}
 
         {/* Reservation History Tab */}
         {activeTab === 'history' && <AdminReservationHistory />}
+
+        {/* Audit Log Tab */}
+        {activeTab === 'audit' && <AuditLog />}
       </main>
 
       {/* Notification Toasts */}

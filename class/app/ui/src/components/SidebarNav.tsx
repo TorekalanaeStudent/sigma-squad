@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styles from '../styles/sidebarNav.module.css';
 
 interface SidebarNavProps {
-  activeTab: 'overview' | 'computers' | 'pending' | 'reservations' | 'history';
-  onTabChange: (tab: 'overview' | 'computers' | 'pending' | 'reservations' | 'history') => void;
+  activeTab: 'overview' | 'computers' | 'pending' | 'history';
+  onTabChange: (tab: 'overview' | 'computers' | 'pending' | 'history') => void;
 }
 
 const SidebarNav: React.FC<SidebarNavProps> = ({ activeTab, onTabChange }) => {
@@ -13,7 +13,6 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeTab, onTabChange }) => {
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'computers', label: 'Computers', icon: '💻' },
     { id: 'pending', label: 'Pending', icon: '⏳' },
-    { id: 'reservations', label: 'My Reservations', icon: '📝' },
     { id: 'history', label: 'History', icon: '📚' },
   ];
 
@@ -47,14 +46,13 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeTab, onTabChange }) => {
               key={item.id}
               className={`${styles['menu-item']} ${activeTab === item.id ? styles['active'] : ''}`}
               onClick={() => {
-                onTabChange(item.id as 'overview' | 'computers' | 'pending' | 'reservations' | 'history');
+                onTabChange(item.id as 'overview' | 'computers' | 'pending' | 'history');
                 // Close sidebar on mobile after selection
                 if (window.innerWidth < 768) {
                   setIsOpen(false);
                 }
               }}
             >
-              <span className={styles['icon']}>{item.icon}</span>
               <span className={styles['label']}>{item.label}</span>
             </button>
           ))}

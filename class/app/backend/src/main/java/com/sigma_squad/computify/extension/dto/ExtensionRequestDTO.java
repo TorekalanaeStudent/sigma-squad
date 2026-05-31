@@ -19,6 +19,7 @@ public class ExtensionRequestDTO {
     private String status;
     private Instant requestedAt;
     private Instant respondedAt;
+    private Instant expiresAt;
 
     public static ExtensionRequestDTO fromEntity(ExtensionRequest request) {
         return ExtensionRequestDTO.builder()
@@ -28,6 +29,7 @@ public class ExtensionRequestDTO {
                 .status(request.getStatus().toString())
                 .requestedAt(request.getRequestedAt())
                 .respondedAt(request.getRespondedAt())
+                .expiresAt(request.getExpiresAt())
                 .build();
     }
 }

@@ -4,9 +4,10 @@ import styles from '../styles/adminDashboard.module.css';
 
 interface PendingReservationsProps {
   onRefresh?: () => void;
+  highlightedId?: number | null;
 }
 
-const PendingReservations: React.FC<PendingReservationsProps> = ({ onRefresh }) => {
+const PendingReservations: React.FC<PendingReservationsProps> = ({ onRefresh, highlightedId }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,9 +92,15 @@ const PendingReservations: React.FC<PendingReservationsProps> = ({ onRefresh }) 
         <div className={styles['reservations-list']}>
           {reservations.map((reservation) => (
             <div
+              id={`pending-${reservation.id}`}
               key={reservation.id}
               className={styles['admin-reservation-card']}
-              style={{ borderLeft: `4px solid ${getStatusColor(reservation.status)}` }}
+              style={{
+                borderLeft: `4px solid ${getStatusColor(reservation.status)}`,
+                backgroundColor: highlightedId === reservation.id ? 'rgba(139, 92, 246, 0.15)' : undefined,
+                borderColor: highlightedId === reservation.id ? 'rgba(139, 92, 246, 0.8)' : undefined,
+                boxShadow: highlightedId === reservation.id ? '0 0 20px rgba(139, 92, 246, 0.4)' : undefined,
+              }}
             >
               <div className={styles['card-header']}>
                 <div>

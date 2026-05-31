@@ -23,6 +23,7 @@ export interface Reservation {
   reservedAt: string;
   expiresAt: string;
   userName: string;
+  computerNumber?: number | string;
 }
 
 export interface Session {
@@ -33,8 +34,8 @@ export interface Session {
   endTime: string;
   status: 'ACTIVE' | 'ENDED';
   minutesRemaining?: number;
-  userName?: string;
-  computerNumber?: string;
+  userName: string;
+  computerNumber: string;
 }
 
 export interface ChatMessage {
@@ -57,6 +58,8 @@ export interface ExtensionRequest {
   requestedAt: string;
   respondedAt?: string;
   expiresAt?: string;
+  userName?: string;
+  computerNumber?: string | number;
 }
 
 export interface AuditLogDTO {
@@ -444,6 +447,58 @@ class HistoryService {
   }
 }
 
+class AuditLogService {
+  async getAllSessions(): Promise<any[]> {
+    try {
+      const response = await apiClient.get<any[]>('/audit/sessions');
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to fetch audit log',
+        status: error.response?.status,
+      };
+    }
+  }
+}
+
+class AuthService {
+  async requestPasswordReset(request: { email: string }): Promise<string> {
+    try {
+      const response = await apiClient.post<string>('/auth/forgot-password', request);
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to send reset email',
+        status: error.response?.status,
+      };
+    }
+  }
+
+  async resetPassword(request: { token: string; newPassword: string; confirmPassword: string }): Promise<string> {
+    try {
+      const response = await apiClient.post<string>('/auth/reset-password', request);
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to reset password',
+        status: error.response?.status,
+      };
+    }
+  }
+
+  async verifyEmail(request: { email: string; code: string }): Promise<string> {
+    try {
+      const response = await apiClient.post<string>('/auth/verify-email', request);
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to verify email',
+        status: error.response?.status,
+      };
+    }
+  }
+}
+
 export default {
   stats: new StatsService(),
   computers: new ComputerService(),
@@ -453,6 +508,8 @@ export default {
   sessions: new SessionService(),
   notifications: new NotificationService(),
   history: new HistoryService(),
+  auditLog: new AuditLogService(),
+  auth: new AuthService(),
 };
 
 

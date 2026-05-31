@@ -23,22 +23,22 @@
 }
 
 .grid::-webkit-scrollbar-track {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(59, 130, 246, 0.1);
   border-radius: 4px;
 }
 
 .grid::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.4);
+  background: rgba(59, 130, 246, 0.4);
   border-radius: 4px;
 }
 
 .grid::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
+  background: rgba(59, 130, 246, 0.6);
 }
 
 .computer-card {
   background: linear-gradient(135deg, rgba(30, 41, 82, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -50,8 +50,8 @@
 
 .computer-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
-  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.6);
   background: linear-gradient(135deg, rgba(30, 41, 82, 0.9) 0%, rgba(15, 23, 42, 1) 100%);
 }
 
@@ -82,7 +82,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(59, 130, 246, 0.08);
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
@@ -105,7 +105,7 @@
 .reserve-btn {
   flex: 1;
   padding: 0.75rem;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -113,13 +113,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .reserve-btn:not(:disabled):hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
-  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 }
 
 .reserve-btn:disabled {

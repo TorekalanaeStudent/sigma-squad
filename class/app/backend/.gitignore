@@ -1,4 +1,9 @@
 HELP.md
+
+### Environment Variables ###
+.env
+.env.local
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

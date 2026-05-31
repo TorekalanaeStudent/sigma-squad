@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0e27 0%, #111829 50%, #1a1f3a 100%);
+  background: #1a1410;
   color: #e5e7eb;
   margin-left: 250px;
   transition: margin-left 0.3s ease;
@@ -14,7 +14,7 @@
   align-items: center;
   padding: 1.5rem 2rem;
   background: rgba(17, 24, 41, 0.8);
-  border-bottom: 2px solid #dc2626;
+  border-bottom: 2px solid #d97706;
   backdrop-filter: blur(10px);
 }
 
@@ -27,7 +27,7 @@
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #dc2626;
+  color: #d97706;
 }
 
 .header-left h1 {
@@ -49,7 +49,7 @@
 
 .logout-btn {
   padding: 0.5rem 1rem;
-  background: #ef4444;
+  background: #d97706;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -59,17 +59,16 @@
 }
 
 .logout-btn:hover {
-  background: #dc2626;
+  background: #b45309;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
 }
 
 .main-content {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
+  overflow-y: auto;
 }
 
 .welcome-section {
@@ -96,8 +95,8 @@
 }
 
 .feature-card {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba(217, 119, 6, 0.3);
   border-radius: 0.75rem;
   padding: 1.5rem;
   text-align: center;
@@ -106,8 +105,8 @@
 
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.2);
-  border-color: rgba(220, 38, 38, 0.4);
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.2);
+  border-color: rgba(217, 119, 6, 0.5);
 }
 
 .feature-icon {
@@ -128,7 +127,7 @@
 
 .feature-btn {
   padding: 0.5rem 1.5rem;
-  background: #dc2626;
+  background: #d97706;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -138,9 +137,9 @@
 }
 
 .feature-btn:hover {
-  background: #b91c1c;
+  background: #b45309;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
 }
 
 .info-section {
@@ -149,14 +148,14 @@
 
 .info-box {
   background: rgba(30, 41, 59, 0.6);
-  border: 2px solid #dc2626;
+  border: 2px solid #d97706;
   border-radius: 0.75rem;
   padding: 2rem;
 }
 
 .info-box h3 {
   margin: 0 0 1rem 0;
-  color: #dc2626;
+  color: #d97706;
   font-size: 1.5rem;
 }
 
@@ -168,13 +167,13 @@
 }
 
 .info-box strong {
-  color: #dc2626;
+  color: #d97706;
 }
 
 .footer {
   text-align: center;
   padding: 1rem 2rem;
-  border-top: 1px solid rgba(220, 38, 38, 0.2);
+  border-top: 1px solid rgba(217, 119, 6, 0.2);
   color: #6b7280;
   font-size: 0.9rem;
 }
@@ -184,7 +183,7 @@
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid rgba(220, 38, 38, 0.2);
+  border-bottom: 2px solid rgba(217, 119, 6, 0.2);
   padding: 0 0 1rem 0;
 }
 
@@ -205,7 +204,7 @@
 }
 
 .tab-btn.active {
-  color: #dc2626;
+  color: #d97706;
 }
 
 .tab-btn.active::after {
@@ -215,7 +214,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
+  background: #d97706;
 }
 
 /* Pending Reservations */
@@ -243,22 +242,22 @@
 }
 
 .reservations-list::-webkit-scrollbar-track {
-  background: rgba(220, 38, 38, 0.1);
+  background: rgba(217, 119, 6, 0.1);
   border-radius: 4px;
 }
 
 .reservations-list::-webkit-scrollbar-thumb {
-  background: rgba(220, 38, 38, 0.4);
+  background: rgba(217, 119, 6, 0.4);
   border-radius: 4px;
 }
 
 .reservations-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(220, 38, 38, 0.6);
+  background: rgba(217, 119, 6, 0.6);
 }
 
 .admin-reservation-card {
-  background: linear-gradient(135deg, rgba(30, 41, 82, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(217, 119, 6, 0.3);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -268,9 +267,9 @@
 
 .admin-reservation-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.3);
-  border-color: rgba(220, 38, 38, 0.6);
-  background: linear-gradient(135deg, rgba(30, 41, 82, 0.9) 0%, rgba(15, 23, 42, 1) 100%);
+  box-shadow: 0 12px 24px rgba(217, 119, 6, 0.3);
+  border-color: rgba(217, 119, 6, 0.6);
+  background: rgba(30, 41, 59, 0.95);
 }
 
 .admin-reservation-card .card-header {
@@ -279,7 +278,7 @@
   align-items: flex-start;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+  border-bottom: 1px solid rgba(217, 119, 6, 0.2);
 }
 
 .admin-reservation-card .card-header h3 {
@@ -316,14 +315,14 @@
   gap: 0.75rem;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(220, 38, 38, 0.2);
+  border-top: 1px solid rgba(217, 119, 6, 0.2);
 }
 
 .time-input {
   flex: 1;
   padding: 0.75rem;
   background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  border: 1px solid rgba(217, 119, 6, 0.3);
   border-radius: 8px;
   color: #ffffff;
   font-size: 0.95rem;
@@ -331,8 +330,8 @@
 
 .time-input:focus {
   outline: none;
-  border-color: rgba(220, 38, 38, 0.6);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  border-color: rgba(217, 119, 6, 0.6);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
 }
 
 .card-actions {
@@ -364,7 +363,7 @@
 .edit-btn {
   flex: 1;
   padding: 0.75rem;
-  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  background: #d97706;
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -372,13 +371,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
 }
 
 .edit-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
-  background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.5);
+  background: #b45309;
 }
 
 .save-btn {

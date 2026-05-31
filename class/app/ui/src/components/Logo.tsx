@@ -11,12 +11,11 @@ export const Logo: React.FC<LogoProps> = ({ size = 'medium' }) => {
   return (
     <div className={`${styles.logo} ${sizeClass}`}>
       <div className={styles['logo-container']}>
-        {/* Library icon inspired by stacked books */}
-        <div className={styles['logo-mark']}>
-          <div className={styles['book']} style={{ '--book-index': 0 } as React.CSSProperties}></div>
-          <div className={styles['book']} style={{ '--book-index': 1 } as React.CSSProperties}></div>
-          <div className={styles['book']} style={{ '--book-index': 2 } as React.CSSProperties}></div>
-        </div>
+        <img 
+          src="/logo.svg" 
+          alt="CLASS Logo" 
+          className={styles['logo-image']}
+        />
       </div>
       <div className={styles['logo-text']}>
         <h1>CLASS</h1>

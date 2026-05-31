@@ -26,24 +26,24 @@
 }
 
 .list::-webkit-scrollbar-track {
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(59, 130, 246, 0.08);
   border-radius: 6px;
   margin: 5px 0;
 }
 
 .list::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(139, 92, 246, 0.5) 0%, rgba(99, 102, 241, 0.4) 100%);
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.5) 0%, rgba(37, 99, 235, 0.4) 100%);
   border-radius: 6px;
   transition: all 0.3s ease;
 }
 
 .list::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(139, 92, 246, 0.8) 0%, rgba(99, 102, 241, 0.7) 100%);
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.8) 0%, rgba(37, 99, 235, 0.7) 100%);
 }
 
 .reservation-card {
   background: linear-gradient(135deg, rgba(30, 41, 82, 0.9) 0%, rgba(15, 23, 42, 1) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.4);
+  border: 1px solid rgba(59, 130, 246, 0.4);
   border-radius: 14px;
   padding: 1.75rem;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -53,8 +53,8 @@
 
 .reservation-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.12);
-  border-color: rgba(139, 92, 246, 0.8);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.12);
+  border-color: rgba(59, 130, 246, 0.8);
   background: linear-gradient(135deg, rgba(30, 41, 82, 0.99) 0%, rgba(15, 23, 42, 1) 100%);
 }
 
@@ -65,7 +65,7 @@
   gap: 1.5rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
 }
 
 .header-content {
@@ -167,7 +167,7 @@
 .extension-btn {
   flex: 1;
   padding: 0.95rem;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
   border: none;
   border-radius: 10px;
   color: #ffffff;

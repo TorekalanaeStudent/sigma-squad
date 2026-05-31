@@ -76,6 +76,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
     public UserDTO toDTO(User user) {
         return new UserDTO(
             user.getId(),

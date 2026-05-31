@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import ForgotPasswordForm from './ForgotPasswordForm';
 import styles from '../styles/authForm.module.css';
 
 interface LoginFormProps {
@@ -12,6 +13,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister, onLogi
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState<string>('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,52 +41,67 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister, onLogi
   const displayError = localError || error;
 
   return (
-    <form className={styles['auth-form']} onSubmit={handleSubmit}>
-      <h2 className={styles['form-title']}>Log in to CLASS</h2>
+    <>
+      <form className={styles['auth-form']} onSubmit={handleSubmit}>
+        <h2 className={styles['form-title']}>Log in to CLASS</h2>
 
-      {displayError && <div className={styles['error-message']}>{displayError}</div>}
+        {displayError && <div className={styles['error-message']}>{displayError}</div>}
 
-      <div className={styles['form-group']}>
-        <input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+        <div className={styles['form-group']}>
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <div className={styles['form-group']}>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <button type="submit" disabled={isLoading} className={styles['btn-primary']}>
+          {isLoading ? 'Logging in...' : 'Log in'}
+        </button>
+
+        <div className={styles['divider']}>or</div>
+
+        <button
+          type="button"
+          onClick={onSwitchToRegister}
           disabled={isLoading}
-          className={styles['form-input']}
+          className={styles['btn-secondary']}
+        >
+          Create New Account
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowForgotPassword(true)}
+          className={styles['forgot-password']}
+        >
+          Forgotten password?
+        </button>
+      </form>
+      {showForgotPassword && (
+        <ForgotPasswordForm
+          onClose={() => setShowForgotPassword(false)}
+          onSuccess={() => {
+            setShowForgotPassword(false);
+            setPassword('');
+          }}
         />
-      </div>
-
-      <div className={styles['form-group']}>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
-          className={styles['form-input']}
-        />
-      </div>
-
-      <button type="submit" disabled={isLoading} className={styles['btn-primary']}>
-        {isLoading ? 'Logging in...' : 'Log in'}
-      </button>
-
-      <div className={styles['divider']}>or</div>
-
-      <button
-        type="button"
-        onClick={onSwitchToRegister}
-        disabled={isLoading}
-        className={styles['btn-secondary']}
-      >
-        Create New Account
-      </button>
-
-      <a href="#" className={styles['forgot-password']}>
-        Forgotten password?
-      </a>
-    </form>
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import VerifyEmailForm from './VerifyEmailForm';
 import styles from '../styles/authForm.module.css';
 
 interface RegisterFormProps {
@@ -15,6 +16,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState<string>('');
+  const [showVerification, setShowVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +57,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
 
     try {
       await register({ name, studentId, email, password });
-      onRegisterSuccess();
+      setRegisteredEmail(email);
+      setShowVerification(true);
     } catch (err: any) {
       setLocalError(err.message || 'Registration failed');
     }
@@ -63,82 +67,94 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
   const displayError = localError || error;
 
   return (
-    <form className={styles['auth-form']} onSubmit={handleSubmit}>
-      <h2 className={styles['form-title']}>Create CLASS Account</h2>
-      <p className={styles['form-subtitle']}>Join our library computer system</p>
+    <>
+      <form className={styles['auth-form']} onSubmit={handleSubmit}>
+        <h2 className={styles['form-title']}>Create CLASS Account</h2>
+        <p className={styles['form-subtitle']}>Join our library computer system</p>
 
-      {displayError && <div className={styles['error-message']}>{displayError}</div>}
+        {displayError && <div className={styles['error-message']}>{displayError}</div>}
 
-      <div className={styles['form-group']}>
-        <input
-          type="text"
-          placeholder="Full Name (e.g., Reyes, John Doe L.)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+        <div className={styles['form-group']}>
+          <input
+            type="text"
+            placeholder="Full Name (e.g., Reyes, John Doe L.)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <div className={styles['form-group']}>
+          <input
+            type="text"
+            placeholder="School ID (e.g., 2026-12345)"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <div className={styles['form-group']}>
+          <input
+            type="email"
+            placeholder="Email (@students.nu-laguna.edu.ph)"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <div className={styles['form-group']}>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <div className={styles['form-group']}>
+          <input
+            type="password"
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={isLoading}
+            className={styles['form-input']}
+          />
+        </div>
+
+        <button type="submit" disabled={isLoading} className={styles['btn-primary']}>
+          {isLoading ? 'Creating Account...' : 'Sign Up'}
+        </button>
+
+        <div className={styles['divider']}>or</div>
+
+        <button
+          type="button"
+          onClick={onSwitchToLogin}
           disabled={isLoading}
-          className={styles['form-input']}
+          className={styles['btn-secondary']}
+        >
+          Already Have an Account?
+        </button>
+      </form>
+      {showVerification && (
+        <VerifyEmailForm
+          email={registeredEmail}
+          onClose={() => {
+            setShowVerification(false);
+            setRegisteredEmail('');
+          }}
+          onSuccess={onRegisterSuccess}
         />
-      </div>
-
-      <div className={styles['form-group']}>
-        <input
-          type="text"
-          placeholder="School ID (e.g., 2026-12345)"
-          value={studentId}
-          onChange={(e) => setStudentId(e.target.value)}
-          disabled={isLoading}
-          className={styles['form-input']}
-        />
-      </div>
-
-      <div className={styles['form-group']}>
-        <input
-          type="email"
-          placeholder="Email (@students.nu-laguna.edu.ph)"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={isLoading}
-          className={styles['form-input']}
-        />
-      </div>
-
-      <div className={styles['form-group']}>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
-          className={styles['form-input']}
-        />
-      </div>
-
-      <div className={styles['form-group']}>
-        <input
-          type="password"
-          placeholder="Confirm password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          disabled={isLoading}
-          className={styles['form-input']}
-        />
-      </div>
-
-      <button type="submit" disabled={isLoading} className={styles['btn-primary']}>
-        {isLoading ? 'Creating Account...' : 'Sign Up'}
-      </button>
-
-      <div className={styles['divider']}>or</div>
-
-      <button
-        type="button"
-        onClick={onSwitchToLogin}
-        disabled={isLoading}
-        className={styles['btn-secondary']}
-      >
-        Already Have an Account?
-      </button>
-    </form>
+      )}
+    </>
   );
 };
 

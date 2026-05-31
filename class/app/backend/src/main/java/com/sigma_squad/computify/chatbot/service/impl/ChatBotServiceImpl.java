@@ -102,7 +102,7 @@ public class ChatBotServiceImpl implements IChatBotService {
 
     private String buildSystemPrompt(String userName, String userEmail, long total, long available, long reserved, long inUse) {
         return """
-            You are a helpful CLASS Assistant for the Computer Library Access System (Computify)
+            You are a helpful CLASS Assistant for the Computer Library Access Supported System 
             at National University.
 
             Your name is NOVA (NU. Online Virtual Assistant). You assist students and librarians with computer reservations,

@@ -4,7 +4,6 @@ import AuthService from '../api/authApi';
 import serviceApi, { type ComputerStats } from '../api/serviceApi';
 import ChatBot from '../components/ChatBot';
 import ComputerList from '../components/ComputerList';
-import UserReservations from '../components/UserReservations';
 import StudentPendingReservations from '../components/StudentPendingReservations';
 import SidebarNav from '../components/SidebarNav';
 import CurrentSessionDisplay from '../components/CurrentSessionDisplay';
@@ -21,7 +20,7 @@ const StudentDashboard: React.FC = () => {
   const [isChatbotMinimized, setIsChatbotMinimized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'computers' | 'pending' | 'reservations' | 'history'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'computers' | 'pending' | 'history'>('overview');
   const [reservationError, setReservationError] = useState<string | null>(null);
   const { notifications, clearNotification } = useWebSocketNotifications();
 
@@ -71,7 +70,7 @@ const StudentDashboard: React.FC = () => {
       setReservationError(null);
       await serviceApi.reservations.createReservation(computerId);
       alert('Reservation created successfully!');
-      setActiveTab('reservations');
+      setActiveTab('pending');
       await fetchStats();
     } catch (err: any) {
       setReservationError(err.message || 'Failed to create reservation');
@@ -195,8 +194,15 @@ const StudentDashboard: React.FC = () => {
         {activeTab === 'computers' && (
           <>
             {reservationError && (
-              <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#fca5a5', marginBottom: '1rem' }}>
-                ⚠️ {reservationError}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#fca5a5', marginBottom: '1rem' }}>
+                <span>⚠️ {reservationError}</span>
+                <button
+                  onClick={() => setReservationError(null)}
+                  style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', fontSize: '1.5rem', padding: '0', lineHeight: '1' }}
+                  aria-label="Close error"
+                >
+                  ✕
+                </button>
               </div>
             )}
             <ComputerList onReserve={handleReserve} />
@@ -205,9 +211,6 @@ const StudentDashboard: React.FC = () => {
 
         {/* Pending Reservations Tab */}
         {activeTab === 'pending' && <StudentPendingReservations onRefresh={fetchStats} />}
-
-        {/* Reservations Tab */}
-        {activeTab === 'reservations' && <UserReservations onRefresh={fetchStats} />}
 
         {/* History Tab */}
         {activeTab === 'history' && user?.id && <StudentHistoryTab userId={user.id} />}

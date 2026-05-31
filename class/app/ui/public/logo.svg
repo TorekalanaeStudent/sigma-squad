@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- C Logo in blue tones -->
+  <defs>
+    <linearGradient id="cGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#003d99;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main C shape with gradient -->
+  <path d="M 170 50 L 80 50 C 40 50 20 80 20 100 C 20 120 40 150 80 150 L 170 150 L 170 120 L 80 120 C 55 120 45 110 45 100 C 45 90 55 80 80 80 L 170 80 Z" 
+    fill="url(#cGradient)" 
+    stroke="none"/>
+</svg>

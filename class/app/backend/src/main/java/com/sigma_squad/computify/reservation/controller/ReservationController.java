@@ -26,6 +26,14 @@ public class ReservationController {
             .toList());
     }
 
+    @GetMapping("/history")
+    public ResponseEntity<List<ReservationDTO>> getReservationHistory() {
+        List<Reservation> reservations = reservationService.getReservationHistory();
+        return ResponseEntity.ok(reservations.stream()
+            .map(reservationService::toDTO)
+            .toList());
+    }
+
     @PostMapping
     public ResponseEntity<ReservationDTO> createReservation(
         @RequestBody CreateReservationRequest request,

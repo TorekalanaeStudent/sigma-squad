@@ -20,11 +20,23 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long extensionRequestId;
+
+    @Column(nullable = true)
+    private Long reservationId;
 
     @Column(nullable = false)
     private Long adminId;
+
+    @Column(nullable = true)
+    private String title;
+
+    @Column(nullable = true, length = 500)
+    private String message;
+
+    @Column(nullable = true)
+    private String type; // INFO, WARNING, ERROR, SUCCESS
 
     @Column(nullable = false)
     @Builder.Default

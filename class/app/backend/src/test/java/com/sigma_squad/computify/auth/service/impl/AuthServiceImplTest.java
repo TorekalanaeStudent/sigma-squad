@@ -7,7 +7,7 @@ import com.sigma_squad.computify.auth.dto.UserDTO;
 import com.sigma_squad.computify.auth.entity.User;
 import com.sigma_squad.computify.auth.service.IUserService;
 import com.sigma_squad.computify.shared.exception.UnauthorizedException;
-import com.sigma_squad.computify.shared.security.JwtTokenProvider;
+import com.sigma_squad.computify.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

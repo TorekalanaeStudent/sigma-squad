@@ -22,6 +22,7 @@ export interface Reservation {
   status: 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'CONFIRMED';
   reservedAt: string;
   expiresAt: string;
+  userName: string;
 }
 
 export interface Session {
@@ -29,7 +30,7 @@ export interface Session {
   userId: number;
   computerId: number;
   startTime: string;
-  endTime?: string;
+  endTime: string;
   status: 'ACTIVE' | 'ENDED';
   minutesRemaining?: number;
   userName?: string;
@@ -139,6 +140,18 @@ class ReservationService {
     } catch (error: any) {
       throw {
         message: error.response?.data?.message || 'Failed to fetch reservations',
+        status: error.response?.status,
+      };
+    }
+  }
+
+  async getReservationHistory(): Promise<Reservation[]> {
+    try {
+      const response = await apiClient.get<Reservation[]>('/reservations/history');
+      return response.data;
+    } catch (error: any) {
+      throw {
+        message: error.response?.data?.message || 'Failed to fetch reservation history',
         status: error.response?.status,
       };
     }
@@ -270,8 +283,12 @@ class ExtensionService {
 
 export interface Notification {
   id: number;
-  extensionRequestId: number;
+  extensionRequestId?: number;
+  reservationId?: number;
   adminId: number;
+  title: string;
+  message: string;
+  type: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS';
   isRead: boolean;
   createdAt: string;
 }

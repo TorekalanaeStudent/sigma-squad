@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import serviceApi from '../api/serviceApi';
 import styles from '../styles/authForm.module.css';
 
@@ -9,18 +9,59 @@ interface VerifyEmailFormProps {
 }
 
 const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({ email, onClose, onSuccess }) => {
-  const [code, setCode] = useState('');
+  const [digits, setDigits] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const handleDigitChange = (index: number, value: string) => {
+    const numValue = value.replace(/\D/g, '');
+    
+    if (numValue.length > 1) {
+      return;
+    }
+
+    const newDigits = [...digits];
+    newDigits[index] = numValue;
+    setDigits(newDigits);
+
+    if (numValue && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    const newDigits = [...digits];
+    pastedData.split('').forEach((char, idx) => {
+      newDigits[idx] = char;
+    });
+    setDigits(newDigits);
+    
+    if (pastedData.length === 6) {
+      inputRefs.current[5]?.blur();
+    } else {
+      inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
+    }
+  };
+
+  const code = digits.join('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
-    if (!code) {
-      setError('Please enter verification code');
+    if (code.length !== 6) {
+      setError('Please enter all 6 digits');
       return;
     }
 
@@ -36,6 +77,10 @@ const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({ email, onClose, onSuc
     }
   };
 
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
   return (
     <div className={styles['modal-overlay']} onClick={onClose}>
       <form className={styles['auth-form']} onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
@@ -46,17 +91,22 @@ const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({ email, onClose, onSuc
         {error && <div className={styles['error-message']}>{error}</div>}
         {success && <div className={styles['success-message']}>{success}</div>}
 
-        <div className={styles['form-group']}>
-          <input
-            type="text"
-            placeholder="000000"
-            maxLength={6}
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            disabled={isLoading || !!success}
-            className={styles['form-input']}
-            autoFocus
-          />
+        <div className={styles['otp-container']}>
+          {digits.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => {inputRefs.current[index] = el;}}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleDigitChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={handlePaste}
+              disabled={isLoading || !!success}
+              className={styles['otp-input']}
+            />
+          ))}
         </div>
 
         <button type="submit" disabled={isLoading || !!success || code.length !== 6} className={styles['btn-primary']}>

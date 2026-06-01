@@ -177,7 +177,7 @@ public class AuthServiceImpl implements IAuthService {
     private void sendVerificationEmail(String email, String code) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("nc8stestemail@gmail.com");
+            message.setFrom("deevcanillo@gmail.com");
             message.setTo(email);
             message.setSubject("Email Verification - CLASS System");
             message.setText(buildVerificationEmail(code));
@@ -192,7 +192,7 @@ public class AuthServiceImpl implements IAuthService {
     private void sendPasswordResetEmail(String email, String token) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("nc8stestemail@gmail.com");
+            message.setFrom("deevcanillo@gmail.com");
             message.setTo(email);
             message.setSubject("Password Reset - CLASS System");
             message.setText(buildPasswordResetEmail(token));

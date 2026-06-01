@@ -1,4 +1,4 @@
-# Environment Variables (local only - .example should be committed)
+# Environment Variables (local only - .example should be committed)a
 .env
 .env.local
 .env.*.local

@@ -12,7 +12,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeTab, onTabChange }) => {
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'computers', label: 'Computers', icon: '💻' },
-    { id: 'pending', label: 'Pending', icon: '⏳' },
+    { id: 'pending', label: 'Pending Reservation', icon: '⏳' },
     { id: 'history', label: 'History', icon: '📚' },
   ];
 

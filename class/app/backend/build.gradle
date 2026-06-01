@@ -35,6 +35,9 @@ dependencies {
 	// DATABASE
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// ENV FILE SUPPORT
+	implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+
 	// LOMBOK
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -5,6 +5,8 @@ import com.sigma_squad.computify.auth.dto.LoginRequest;
 import com.sigma_squad.computify.auth.dto.RegisterRequest;
 import com.sigma_squad.computify.auth.dto.UserDTO;
 import com.sigma_squad.computify.auth.entity.User;
+import com.sigma_squad.computify.auth.repository.PasswordResetRepository;
+import com.sigma_squad.computify.auth.repository.VerificationTokenRepository;
 import com.sigma_squad.computify.auth.service.IAuthService;
 import com.sigma_squad.computify.auth.service.IUserService;
 import com.sigma_squad.computify.auth.service.impl.AuthServiceImpl;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
@@ -37,6 +40,15 @@ public class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private PasswordResetRepository passwordResetRepository;
+
+    @Mock
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @Mock
+    private JavaMailSender javaMailSender;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -54,6 +66,7 @@ public class AuthServiceTest {
                 .studentId("2023-12345")
                 .passwordHash("hashed_password")
                 .isAdmin(false)
+                .isVerified(true)
                 .build();
 
         testUserDTO = new UserDTO(1L, "John Doe", "2023-12345", "john@students.nu-laguna.edu.ph", false, Instant.now());
@@ -69,7 +82,6 @@ public class AuthServiceTest {
         when(userService.createUser(
             "John Doe", "2023-12345", "john@students.nu-laguna.edu.ph", "hashed_password", false
         )).thenReturn(testUser);
-        when(jwtTokenProvider.generateToken(1L, "john@students.nu-laguna.edu.ph")).thenReturn("jwt_token");
         when(userService.toDTO(testUser)).thenReturn(testUserDTO);
 
         // When
@@ -77,11 +89,12 @@ public class AuthServiceTest {
 
         // Then
         assertNotNull(response);
-        assertEquals("jwt_token", response.token());
+        assertNull(response.token());
         assertNotNull(response.user());
         verify(userService, times(1)).createUser(
             "John Doe", "2023-12345", "john@students.nu-laguna.edu.ph", "hashed_password", false
         );
+        verify(verificationTokenRepository, times(1)).save(any());
     }
 
     @Test
@@ -111,5 +124,7 @@ public class AuthServiceTest {
         assertThrows(UnauthorizedException.class, () ->
             authService.login(new LoginRequest("john@students.nu-laguna.edu.ph", "wrongpassword"))
         );
+        
+        verify(passwordEncoder, times(1)).matches("wrongpassword", "hashed_password");
     }
 }

@@ -6,12 +6,17 @@ interface AdminReservationHistoryProps {
   onRefresh?: () => void;
 }
 
+type SortColumn = keyof Reservation | null;
+type SortOrder = 'asc' | 'desc';
+
 const AdminReservationHistory: React.FC<AdminReservationHistoryProps> = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   useEffect(() => {
     fetchReservationHistory();
@@ -46,6 +51,47 @@ const AdminReservationHistory: React.FC<AdminReservationHistoryProps> = () => {
       r.computerId?.toString().includes(term) ||
       r.userId?.toString().includes(term)
     ));
+  };
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Toggle sort order if clicking the same column
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new column and default to ascending
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const getSortedReservations = () => {
+    if (!sortColumn) return filteredReservations;
+
+    const sorted = [...filteredReservations].sort((a, b) => {
+      const aVal = a[sortColumn];
+      const bVal = b[sortColumn];
+
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+
+      if (typeof aVal === 'string') {
+        const comparison = aVal.localeCompare(bVal as string);
+        return sortOrder === 'asc' ? comparison : -comparison;
+      }
+
+      if (typeof aVal === 'number') {
+        return sortOrder === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+      }
+
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getSortIndicator = (column: SortColumn) => {
+    if (sortColumn !== column) return '';
+    return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
 
   const getStatusIcon = (status: string) => {
@@ -108,12 +154,12 @@ const AdminReservationHistory: React.FC<AdminReservationHistoryProps> = () => {
         <table className={styles['audit-table']}>
           <thead>
             <tr>
-              <th>Reservation ID</th>
-              <th>User Name</th>
-              <th>Computer</th>
-              <th>Reserved At</th>
-              <th>Expires At</th>
-              <th>Status</th>
+              <th onClick={() => handleSort('id')} style={{ cursor: 'pointer' }}>Reservation ID{getSortIndicator('id')}</th>
+              <th onClick={() => handleSort('userName')} style={{ cursor: 'pointer' }}>User Name{getSortIndicator('userName')}</th>
+              <th onClick={() => handleSort('computerId')} style={{ cursor: 'pointer' }}>Computer{getSortIndicator('computerId')}</th>
+              <th onClick={() => handleSort('reservedAt')} style={{ cursor: 'pointer' }}>Reserved At{getSortIndicator('reservedAt')}</th>
+              <th onClick={() => handleSort('expiresAt')} style={{ cursor: 'pointer' }}>Expires At{getSortIndicator('expiresAt')}</th>
+              <th onClick={() => handleSort('status')} style={{ cursor: 'pointer' }}>Status{getSortIndicator('status')}</th>
               <th>Duration (min)</th>
             </tr>
           </thead>
@@ -121,7 +167,7 @@ const AdminReservationHistory: React.FC<AdminReservationHistoryProps> = () => {
             {filteredReservations.length === 0 ? (
               <tr><td colSpan={7} className={styles['empty']}>No reservations found</td></tr>
             ) : (
-              filteredReservations.map(r => (
+              getSortedReservations().map(r => (
                 <tr key={r.id}>
                   <td>#{r.id}</td>
                   <td>{r.userName || 'N/A'}</td>

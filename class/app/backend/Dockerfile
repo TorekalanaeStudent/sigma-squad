@@ -10,8 +10,8 @@ COPY gradle ./gradle
 # Copy source code
 COPY src ./src
 
-# Build the application
-RUN ./gradlew build -x test
+# Make gradlew executable and build
+RUN chmod +x ./gradlew && ./gradlew build -x test
 
 # Runtime stage
 FROM eclipse-temurin:21-jre

@@ -57,6 +57,16 @@ public class ChatBotServiceImpl implements IChatBotService {
         return new ChatBotResponse(botReply, remainingMessages);
     }
 
+    private String buildComputerStatusList() {
+        var computers = computerRepository.findAll();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Detailed Computer Status:\n");
+        for (var computer : computers) {
+            sb.append(String.format("PC %d: %s\n", computer.getComputerNumber(), computer.getStatus()));
+        }
+        return sb.toString();
+    }
+
     private void initializeUser(Long userId) {
         userTokens.putIfAbsent(userId, MAX_TOKENS);
         lastRefillTime.putIfAbsent(userId, System.currentTimeMillis());
@@ -100,7 +110,7 @@ public class ChatBotServiceImpl implements IChatBotService {
         return userTokens.getOrDefault(userId, MAX_TOKENS);
     }
 
-    private String buildSystemPrompt(String userName, String userEmail, long total, long available, long reserved, long inUse) {
+    private String buildSystemPrompt(String userName, String userEmail, long total, long available, long reserved, long inUse, String computerStatusList) {
         return """
             You are a helpful CLASS Assistant for the Computer Library Access Supported System 
             at National University.
@@ -113,16 +123,18 @@ public class ChatBotServiceImpl implements IChatBotService {
             - Email: %s
             - Role: Student
 
-            Current Computer Availability (live data):
+            Current Computer Availability Summary (live data):
             - Total Computers: %d
             - Available: %d
             - Reserved: %d
             - In Use: %d
 
+            %s
+
             Your responsibilities:
             - Help users understand computer reservations and library policies
             - Answer questions about the CLASS system
-            - Report current computer availability when asked
+            - Report current computer availability when asked (use the detailed list to answer specific PC questions)
             - Provide friendly and concise assistance
             - If you don't know something, be honest about it
 
@@ -136,8 +148,9 @@ public class ChatBotServiceImpl implements IChatBotService {
             - Write in plain text only, no markdown or code formatting
             - Make your messages concise and to the point
             - Always respond helpfully and respectfully
+            - Use the detailed computer status list above to accurately answer questions about specific computers
             - If asked about something outside your knowledge, say: I'm not sure about that. Please contact library staff for assistance.
-            """.formatted(userName, userEmail, total, available, reserved, inUse);
+            """.formatted(userName, userEmail, total, available, reserved, inUse, computerStatusList);
     }
 
     private String getAIResponse(String userMessage, String userName, String userEmail, long total, long available, long reserved, long inUse) throws IOException, InterruptedException {
@@ -145,7 +158,8 @@ public class ChatBotServiceImpl implements IChatBotService {
             return "I'm temporarily unavailable. Please try again later.";
         }
 
-        String systemPrompt = buildSystemPrompt(userName, userEmail, total, available, reserved, inUse);
+        String computerStatusList = buildComputerStatusList();
+        String systemPrompt = buildSystemPrompt(userName, userEmail, total, available, reserved, inUse, computerStatusList);
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();

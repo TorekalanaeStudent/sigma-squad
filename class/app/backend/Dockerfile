@@ -14,7 +14,7 @@ COPY src ./src
 RUN ./gradlew build -x test
 
 # Runtime stage
-FROM openjdk:21-slim
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
